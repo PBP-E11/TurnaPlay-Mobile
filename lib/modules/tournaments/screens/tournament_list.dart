@@ -14,7 +14,7 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         // Judul aplikasi "Football News" dengan teks putih dan tebal.
         title: const Text(
-          'Egoist Must Buy',
+          'TurnaPlay',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -54,7 +54,7 @@ class MyHomePage extends StatelessWidget {
                       const Padding(
                         padding: EdgeInsets.only(top: 16.0),
                         child: Text(
-                          'Selamat datang di Egoist Must Buy',
+                          'Selamat datang di TurnaPlay',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18.0,
