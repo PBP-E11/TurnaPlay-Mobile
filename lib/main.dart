@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/modules/tournaments/screens/tournament_list.dart';
+import 'package:turnaplay_mobile/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
           .copyWith(secondary: Colors.blueAccent[400]),
         ),
-        home: MyHomePage(title: 'Football News'),
+        home: const LoginPage(),
       ),
     );
   }
