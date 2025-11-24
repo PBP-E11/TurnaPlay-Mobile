@@ -88,27 +88,27 @@ Fitur tersebut diadakan guna untuk mengatasi situasi adanya turnamen atau penggu
 **User dengan role admin dibuat oleh admin.**
 
 ## Pengintegrasian Dengan Django API
-Register -> POST /accounts/api/register
-Login -> POST /api/login
-Create Tournament -> POST /api/create-tournament
-View Tournament -> GET /api/tournaments
-Delete Tournament -> DELETE /api/delete-tournament
-Buat Game Account -> POST /api/game-account/create
-List Game Account -> GET /api/game-account/list
-Edit Game Account -> POST /api/game-account/update
-Delete Game Account -> DELETE /api/game-account/delete
-Daftar Tim Baru -> POST /api/team/create
-Update Nama Tim -> POST /api/team/update
-Bubarkan Tim -> DELETE /api/team/delete
-Masuk Tim -> POST /api/team-member/create
-Edit Game Account Pada Tim -> POST /api/team-member/edit
-Keluar dari Tim -> DELETE /api/team-member/delete
-Buat Invite Tim -> POST /api/invites/send
-Cek Invite Yang Ada -> GET /api/invites/incoming
-Cek Invite Yang Baru Muncul -> GET /api/invites/new
-Balas Invite -> POST /api/invites/respond
-User Dashboard -> GET /api/dashbord
-User List -> GET /api/dashboard/users
-Buat Akun Organizer -> POST /api/dashboard/users/create-organizer
-Detail User -> GET /api/dashboard/users
-Hapus User -> DELETE /api/dashboard/users
+- Register -> POST /accounts/api/register
+- Login -> POST /api/login
+- Create Tournament -> POST /api/create-tournament
+- View Tournament -> GET /api/tournaments
+- Delete Tournament -> DELETE /api/delete-tournament
+- Buat Game Account -> POST /api/game-account/create
+- List Game Account -> GET /api/game-account/list
+- Edit Game Account -> POST /api/game-account/update
+- Delete Game Account -> DELETE /api/game-account/delete
+- Daftar Tim Baru -> POST /api/team/create
+- Update Nama Tim -> POST /api/team/update
+- Bubarkan Tim -> DELETE /api/team/delete
+- Masuk Tim -> POST /api/team-member/create
+- Edit Game Account Pada Tim -> POST /api/team-member/edit
+- Keluar dari Tim -> DELETE /api/team-member/delete
+- Buat Invite Tim -> POST /api/invites/send
+- Cek Invite Yang Ada -> GET /api/invites/incoming
+- Cek Invite Yang Baru Muncul -> GET /api/invites/new
+- Balas Invite -> POST /api/invites/respond
+- User Dashboard -> GET /api/dashbord
+- User List -> GET /api/dashboard/users
+- Buat Akun Organizer -> POST /api/dashboard/users/create-organizer
+- Detail User -> GET /api/dashboard/users
+- Hapus User -> DELETE /api/dashboard/users
