@@ -11,7 +11,7 @@
 
 TurnaPlay adalah sebuah aplikasi yang berfungsi sebagai pusat informasi turnamen esport di Indonesia. Platform ini hadir untuk menjawab masalah yang sering dialami para gamers, yaitu sulitnya menemukan informasi lomba karena tersebar di berbagai akun media sosial seperti instagram. Melalui TurnaPlay, semua informasi turnamen dikumpulkan, disaring, dan diverifikasi agar pengguna bisa mendapatkan data yang akurat dan terstruktur dalam satu tempat. 
 
-Tujuan utama TurnaPlay adalah menghemat waktu para gamers sekaligus membantu penyelenggara menjangkau peserta lebih luas. Dengan fitur pencarian dan filter berdasarkan game, tanggal, serta popularitas, pengguna dapat dengan mudah menemukan turnamen yang sesuai dengan minat dan kemampuannya.
+Tujuan utama TurnaPlay adalah menghemat waktu para gamers sekaligus membantu penyelenggara menjangkau peserta lebih luas. Dengan fitur filter berdasarkan game pengguna dapat dengan mudah menemukan turnamen yang sesuai dengan minat dan kemampuannya.
 
 ## Daftar Modul
 Semua operasi CRUD hanya dapat dilakukan oleh pengguna yang sudah login sesuai hak aksesnya (atau admin), kecuali jika ditandai (dengan garis bawah/underscore). Fields hanyalah deskripsi singkat sebagian data penting dan bagaimana interaksi antar modul.
