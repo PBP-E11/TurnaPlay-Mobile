@@ -88,8 +88,8 @@ Fitur tersebut diadakan guna untuk mengatasi situasi adanya turnamen atau penggu
 **User dengan role admin dibuat oleh admin.**
 
 ## Pengintegrasian Dengan Django API
-- Register -> POST /accounts/api/register
-- Login -> POST /api/login
+- Register -> POST /api/accounts/register
+- Login -> POST /api/accounts/login
 - Create Tournament -> POST /api/create-tournament
 - View Tournament -> GET /api/tournaments
 - Delete Tournament -> DELETE /api/delete-tournament
