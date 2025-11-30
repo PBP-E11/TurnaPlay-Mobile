@@ -38,25 +38,39 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
   Future<void> _fetchData() async {
     final request = context.read<CookieRequest>();
     try {
+      debugPrint("Fetching Games and Formats...");
+      
       // Fetch Games
       final gamesResponse = await request.get(
-        'http://127.0.0.1:8000/tournaments/api/games/',
+        'http://localhost:8000/api/tournaments/games/',
       );
+      debugPrint("Games Response: $gamesResponse");
       
       // Fetch Formats
       final formatsResponse = await request.get(
-        'http://127.0.0.1:8000/tournaments/api/formats/',
+        'http://localhost:8000/api/tournaments/formats/',
       );
+      debugPrint("Formats Response: $formatsResponse");
 
       setState(() {
         if (gamesResponse != null) {
-          final gameEntry = GameEntry.fromJson(gamesResponse);
-          _games = gameEntry.game;
+          if (gamesResponse is List) {
+             // Handle standard list response: [{}, {}]
+             _games = gamesResponse.map((x) => Game.fromJson(x)).toList();
+          } else {
+             // Handle wrapped response: {"game": [{}, {}]}
+             final gameEntry = GameEntry.fromJson(gamesResponse);
+             _games = gameEntry.game;
+          }
         }
 
         if (formatsResponse != null) {
-          final formatEntry = TournamentFormatEntry.fromJson(formatsResponse);
-          _formats = formatEntry.tournamentFormat;
+          if (formatsResponse is List) {
+             _formats = formatsResponse.map((x) => TournamentFormat.fromJson(x)).toList();
+          } else {
+             final formatEntry = TournamentFormatEntry.fromJson(formatsResponse);
+             _formats = formatEntry.tournamentFormat;
+          }
         }
         
         _isLoading = false;
@@ -290,16 +304,16 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                             return;
                           }
 
-                          final response = await request.postJson(
-                            "http://127.0.0.1:8000/tournaments/create-flutter/",
-                            <String, dynamic>{
+                          final response = await request.post(
+                            "http://localhost:8000/api/tournaments/create-tournament/",
+                            {
                               'tournament_name': _tournamentName,
                               'description': _description,
                               'tournament_date':
                                   "${_tournamentDate!.year}-${_tournamentDate!.month.toString().padLeft(2, '0')}-${_tournamentDate!.day.toString().padLeft(2, '0')}",
-                              'prize_pool': _prizePool,
+                              'prize_pool': _prizePool.toString(), // Converted to String
                               'banner': _banner,
-                              'team_maximum_count': _teamMaximumCount,
+                              'team_maximum_count': _teamMaximumCount.toString(), // Converted to String
                               'tournament_format': _selectedFormatId,
                             },
                           );
