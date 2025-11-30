@@ -1,11 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({super.key});
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
 
-  final String nama = "Muhammad Hadziqul Falah Teguh"; //nama
-  final String npm = "2406437432"; //npm
-  final String kelas = "E"; //kelas
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final ScrollController _scrollController = ScrollController();
+  bool _showButton = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset > 200 && !_showButton) {
+      setState(() {
+        _showButton = true;
+      });
+    } else if (_scrollController.offset <= 200 && _showButton) {
+      setState(() {
+        _showButton = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // Scaffold menyediakan struktur dasar halaman dengan AppBar dan body.
@@ -21,10 +52,11 @@ class MyHomePage extends StatelessWidget {
           ),
         ),
         // Warna latar belakang AppBar diambil dari skema warna tema aplikasi.
-        backgroundColor: Color(0xFF1A237E),
+        backgroundColor: const Color(0xFF494598),
       ),
       // Body halaman dengan padding di sekelilingnya.
       body: SingleChildScrollView(
+          controller: _scrollController,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             // Menyusun widget secara vertikal dalam sebuah kolom.
@@ -34,10 +66,10 @@ class MyHomePage extends StatelessWidget {
                 // Row untuk menampilkan 3 InfoCard secara horizontal.
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    InfoCard(title: 'NPM', content: npm),
-                    InfoCard(title: 'Name', content: nama),
-                    InfoCard(title: 'Class', content: kelas),
+                  children: const [
+                     InfoCard(title: "Tournaments", content: "10 Active"),
+                     InfoCard(title: "Players", content: "150 Online"),
+                     InfoCard(title: "Matches", content: "5 Live"),
                   ],
                 ),
 
@@ -48,31 +80,35 @@ class MyHomePage extends StatelessWidget {
                 Center(
                   child: Column(
                     // Menyusun teks dan grid item secara vertikal.
-
                     children: [
-                      // Menampilkan teks sambutan dengan gaya tebal dan ukuran 18.
-                      const Padding(
-                        padding: EdgeInsets.only(top: 16.0),
-                        child: Text(
-                          'Selamat datang di TurnaPlay',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18.0,
-                          ),
-                        ),
+                      const Text(
+                        'Upcoming Tournaments',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-
+                      const SizedBox(height: 10),
                       // Grid untuk menampilkan ItemCard dalam bentuk grid 3 kolom.
                       GridView.count(
-                        primary: true,
+                        primary: false, // Use false because we have a controller on parent
                         padding: const EdgeInsets.all(20),
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 10,
                         crossAxisCount: 3,
                         // Agar grid menyesuaikan tinggi kontennya.
                         shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(), // Let SingleChildScrollView handle scroll
 
                         // Menampilkan ItemCard untuk setiap item dalam list items.
+                        children: List.generate(30, (index) {
+                          return Card(
+                            color: Colors.deepPurple[100],
+                            child: Center(
+                              child: Text(
+                                'Tournament ${index + 1}',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        }),
                       ),
                     ],
                   ),
@@ -81,6 +117,21 @@ class MyHomePage extends StatelessWidget {
             ),
           )
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButton: _showButton
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TournamentCreationForm(),
+                  ),
+                );
+              },
+              label: const Text('Create Tournament'),
+              icon: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }

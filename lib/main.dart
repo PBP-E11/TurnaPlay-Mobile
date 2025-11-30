@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:turnaplay_mobile/modules/tournaments/screens/tournament_list.dart';
 import 'package:turnaplay_mobile/login.dart';
 
 void main() {
