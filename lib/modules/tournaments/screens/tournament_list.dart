@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
 import 'package:turnaplay_mobile/modules/tournaments/widgets/tournament_card.dart';
+import 'package:turnaplay_mobile/modules/game_account/models/GameAccountFeature.dart';
+import 'package:turnaplay_mobile/modules/game_account/models/GameAccountController.dart';
+import 'package:turnaplay_mobile/modules/game_account/models/GameAccountAPI.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -144,7 +147,15 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.black,
               size: 28,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const GameAccountFeature(),
+                ),
+              );
+            },
+
           ),
           const SizedBox(width: 8),
         ],
