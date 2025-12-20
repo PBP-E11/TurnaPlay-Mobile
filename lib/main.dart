@@ -10,13 +10,10 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        Provider<CookieRequest>(
-          create: (_) => CookieRequest(),
-        ),
+        Provider<CookieRequest>(create: (_) => CookieRequest()),
 
         Provider<GameAccountApi>(
-          create: (context) =>
-              GameAccountApi(context.read<CookieRequest>()),
+          create: (context) => GameAccountApi(context.read<CookieRequest>()),
         ),
 
         ChangeNotifierProvider<GameAccountController>(
@@ -58,8 +55,9 @@ class MyApp extends StatelessWidget {
           //
           // This works for code too, not just values: Most code changes can be
           // tested with just a hot reload.
-            colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
-          .copyWith(secondary: Colors.blueAccent[400]),
+          colorScheme: ColorScheme.fromSwatch(
+            primarySwatch: Colors.blue,
+          ).copyWith(secondary: Colors.blueAccent[400]),
         ),
         home: const LoginPage(),
       ),

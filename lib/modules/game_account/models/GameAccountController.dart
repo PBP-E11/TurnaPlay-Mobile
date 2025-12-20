@@ -31,18 +31,43 @@ class GameAccountController extends ChangeNotifier {
   }
 
   Future<void> addAccount(String gameId, String ingameName) async {
-    final account = await api.createAccount(
+    await api.createAccount(
       gameId: gameId,
       ingameName: ingameName,
     );
-    accounts.add(account);
-    notifyListeners();
+    await loadAccounts(gameId: selectedGameId);
+  }
+
+  Future<GameAccountEntry> updateAccount({
+    required String id,
+    required String gameId,
+    required String ingameName,
+  }) async {
+    final updated = await api.updateAccount(
+      id: id,
+      gameId: gameId,
+      ingameName: ingameName,
+    );
+
+    final index = accounts.indexWhere((a) => a.id == id);
+    if (index != -1) {
+      accounts[index] = updated;
+      notifyListeners();
+    }
+
+    return updated;
   }
 
   Future<void> deleteAccount(String id) async {
     await api.deleteAccount(id);
     accounts.removeWhere((a) => a.id == id);
     notifyListeners();
+  }
+
+  String? selectedGameId; // null = All
+  void setGameFilter(String? gameId) {
+    selectedGameId = gameId;
+    loadAccounts();
   }
 
   List<Game> games = [];

@@ -70,6 +70,18 @@ class _GameAccountFormScreenState extends State<GameAccountFormScreen> {
 
                   Navigator.pop(context);
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF494598),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 14,
+                  ),
+                ),
                 child: const Text('Save'),
               ),
             ],

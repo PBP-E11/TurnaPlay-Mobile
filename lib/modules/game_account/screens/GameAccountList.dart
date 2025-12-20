@@ -25,10 +25,51 @@ class _GameAccountListScreenState extends State<GameAccountListScreen> {
     final controller = context.watch<GameAccountController>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Game Accounts')),
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF5F5F5),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).pop();
+          },
+        ),
+        title: const Text('Game Accounts'),
+        actions: [
+          Consumer<GameAccountController>(
+            builder: (context, controller, _) {
+              if (controller.games.isEmpty) return const SizedBox();
+
+              return DropdownButtonHideUnderline(
+                child: DropdownButton<String?>(
+                  value: controller.selectedGameId,
+                  icon: const Icon(Icons.filter_list, color: Color(0xFF494598)),
+                  onChanged: (value) {
+                    controller.setGameFilter(value);
+                  },
+                  items: [
+                    const DropdownMenuItem<String?>(
+                      value: null,
+                      child: Text('All games'),
+                    ),
+                    ...controller.games.map(
+                      (game) => DropdownMenuItem<String?>(
+                        value: game.id,
+                        child: Text(game.name),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       floatingActionButton: Builder(
         builder: (innerContext) {
           return FloatingActionButton(
+            backgroundColor: const Color(0xFF494598),
             child: const Icon(Icons.add),
             onPressed: () {
               Navigator.of(context).pushNamed('/add');

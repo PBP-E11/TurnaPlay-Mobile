@@ -1,28 +1,217 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/GameAccountEntry.dart';
+import '../models/GameAccountController.dart';
 
-class GameAccountDetailScreen extends StatelessWidget {
+class GameAccountDetailScreen extends StatefulWidget {
   final GameAccountEntry account;
 
-  const GameAccountDetailScreen(this.account);
+  const GameAccountDetailScreen(this.account, {super.key});
+
+  @override
+  State<GameAccountDetailScreen> createState() =>
+      _GameAccountDetailScreenState();
+}
+
+class _GameAccountDetailScreenState extends State<GameAccountDetailScreen> {
+  static const Color primaryColor = Color(0xFF494598);
+
+  bool _editing = false;
+
+  late GameAccountEntry _account;
+  late TextEditingController _ingameNameController;
+  String? _selectedGameId;
+
+  late String _originalIngameName;
+  late String? _originalGameId;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _account = widget.account;
+    _originalIngameName = _account.ingameName;
+    _originalGameId = _account.game;
+    _ingameNameController = TextEditingController(text: _account.ingameName);
+    _selectedGameId = _account.game;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<GameAccountController>();
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Account Detail')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Game: ${account.gameName}'),
-            const SizedBox(height: 8),
-            Text('In-game name: ${account.ingameName}'),
-            const SizedBox(height: 8),
-            Text('Active: ${account.active}'),
-          ],
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF5F5F5),
+        elevation: 0,
+        title: const Text(
+          'Account Detail',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        iconTheme: const IconThemeData(color: Colors.black),
+        actions: [
+          if (!_editing)
+            IconButton(
+              icon: const Icon(Icons.edit, color: primaryColor),
+              onPressed: () {
+                setState(() => _editing = true);
+              },
+            ),
+        ],
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(24),
+            child: _editing ? _editSection(controller) : _viewSection(),
+          ),
         ),
       ),
+    );
+  }
+
+  // ---------------- VIEW MODE ----------------
+
+  Widget _viewSection() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _infoRow(
+          icon: Icons.videogame_asset,
+          label: 'Game',
+          value: _account.gameName ?? 'Unknown',
+        ),
+        const SizedBox(height: 20),
+        _infoRow(
+          icon: Icons.person,
+          label: 'In-game Name',
+          value: _account.ingameName,
+        ),
+        const SizedBox(height: 20),
+        _infoRow(
+          icon: Icons.check_circle_outline,
+          label: 'Status',
+          value: _account.active ? 'Active' : 'Inactive',
+          valueColor: _account.active ? Colors.green : Colors.grey[600],
+        ),
+      ],
+    );
+  }
+
+  // ---------------- EDIT MODE ----------------
+
+  Widget _editSection(GameAccountController controller) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        DropdownButtonFormField<String>(
+          value: _selectedGameId,
+          items: controller.games
+              .map((g) => DropdownMenuItem(value: g.id, child: Text(g.name)))
+              .toList(),
+          onChanged: (v) => setState(() => _selectedGameId = v),
+          decoration: const InputDecoration(labelText: 'Game'),
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _ingameNameController,
+          decoration: const InputDecoration(labelText: 'In-game name'),
+        ),
+        const SizedBox(height: 24),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton(
+              onPressed: () {
+                setState(() => _editing = false);
+              },
+              child: const Text('Cancel'),
+            ),
+            const SizedBox(width: 12),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              onPressed: () async {
+                final newName = _ingameNameController.text.trim();
+                final newGameId = _selectedGameId;
+
+                // If nothing changed, just exit edit mode
+                if (newName == _originalIngameName &&
+                    newGameId == _originalGameId) {
+                  setState(() => _editing = false);
+                  return;
+                }
+
+                final updated = await controller.updateAccount(
+                  id: _account.id,
+                  gameId: newGameId ?? _originalGameId!,
+                  ingameName: newName.isEmpty ? _originalIngameName : newName,
+                );
+
+                setState(() {
+                  _account = updated;
+                  _originalIngameName = updated.ingameName;
+                  _originalGameId = updated.game;
+                  _editing = false;
+                });
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _infoRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    Color? valueColor,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, color: primaryColor),
+        const SizedBox(width: 16),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: valueColor ?? Colors.black,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

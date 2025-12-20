@@ -19,7 +19,7 @@ class GameAccountTile extends StatelessWidget {
         title: Text(account.ingameName),
         subtitle: Text(account.gameName ?? 'Unknown game'),
         trailing: IconButton(
-          icon: const Icon(Icons.delete),
+          icon: const Icon(Icons.delete, color: Color.fromRGBO(255, 105, 0, 1)),
           onPressed: onDelete,
         ),
         onTap: onTap,

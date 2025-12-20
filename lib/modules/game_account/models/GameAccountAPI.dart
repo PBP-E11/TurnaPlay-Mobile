@@ -30,6 +30,23 @@ class GameAccountApi {
     return GameAccountEntry.fromJson(response);
   }
 
+  Future<GameAccountEntry> updateAccount({
+    required String id,
+    required String gameId,
+    required String ingameName,
+  }) async {
+    final response = await request.postJson(
+      'http://localhost:8000/api/game-accounts/$id/',
+      jsonEncode({
+        '_method': 'PATCH',
+        'game': gameId,
+        'ingame_name': ingameName,
+      }),
+    );
+
+    return GameAccountEntry.fromJson(response);
+  }
+
   Future<void> deleteAccount(String id) async {
     await request.postJson(
       'http://localhost:8000/api/game-accounts/$id/',
