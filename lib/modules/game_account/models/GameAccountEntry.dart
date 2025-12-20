@@ -9,29 +9,30 @@ List<GameAccountEntry> gameAccountEntryFromJson(String str) => List<GameAccountE
 String gameAccountEntryToJson(List<GameAccountEntry> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class GameAccountEntry {
-    String id;
-    String user;
-    String game;
-    String gameName;
-    String ingameName;
-    bool active;
+    final String id;
+    final String? user;
+    final String? game;
+    final String? gameName;
+    final String ingameName;
+    final bool active;
+
 
     GameAccountEntry({
         required this.id,
-        required this.user,
-        required this.game,
-        required this.gameName,
+        this.user,
+        this.game,
+        this.gameName,
         required this.ingameName,
         required this.active,
     });
 
     factory GameAccountEntry.fromJson(Map<String, dynamic> json) => GameAccountEntry(
-        id: json["id"],
-        user: json["user"],
-        game: json["game"],
-        gameName: json["game_name"],
-        ingameName: json["ingame_name"],
-        active: json["active"],
+        id: json["id"].toString(),
+        user: json["user"]?.toString(),
+        game: json["game"]?.toString(),
+        gameName: json["game_name"]?.toString(),
+        ingameName: json["ingame_name"] ?? '',
+        active: json["active"] ?? true,
     );
 
     Map<String, dynamic> toJson() => {

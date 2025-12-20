@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
 import 'package:turnaplay_mobile/modules/tournaments/widgets/tournament_card.dart';
+import '../../game_account/models/GameAccountFeature.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});

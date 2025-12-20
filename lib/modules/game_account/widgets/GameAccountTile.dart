@@ -17,7 +17,7 @@ class GameAccountTile extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(account.ingameName),
-        subtitle: Text(account.gameName),
+        subtitle: Text(account.gameName ?? 'Unknown game'),
         trailing: IconButton(
           icon: const Icon(Icons.delete),
           onPressed: onDelete,

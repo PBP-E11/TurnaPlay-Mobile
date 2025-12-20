@@ -2,9 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/login.dart';
+import 'modules/game_account/models/GameAccountAPI.dart';
+import 'modules/game_account/models/GameAccountController.dart';
+import 'modules/game_account/models/GameAccountFeature.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<CookieRequest>(
+          create: (_) => CookieRequest(),
+        ),
+
+        Provider<GameAccountApi>(
+          create: (context) =>
+              GameAccountApi(context.read<CookieRequest>()),
+        ),
+
+        ChangeNotifierProvider<GameAccountController>(
+          create: (context) =>
+              GameAccountController(context.read<GameAccountApi>()),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
