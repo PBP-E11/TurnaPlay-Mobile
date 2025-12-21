@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/widgets/base_screen.dart';
+import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
 import '../models/GameAccountEntry.dart';
 import '../models/GameAccountController.dart';
 
@@ -36,49 +38,82 @@ class _GameAccountDetailScreenState extends State<GameAccountDetailScreen> {
     _selectedGameId = _account.game;
   }
 
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      Navigator.of(context, rootNavigator: true).pushReplacementNamed('/home');
+    } else if (index == 1) {
+      Navigator.of(context, rootNavigator: true).push(
+        MaterialPageRoute(builder: (context) => const TournamentCreationForm()),
+      );
+    } else if (index == 2) {
+      Navigator.of(context, rootNavigator: true).pushReplacementNamed('/profile');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<GameAccountController>();
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F5F5),
-        elevation: 0,
-        title: const Text(
-          'Account Detail',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        iconTheme: const IconThemeData(color: Colors.black),
-        actions: [
-          if (!_editing)
-            IconButton(
-              icon: const Icon(Icons.edit, color: primaryColor),
-              onPressed: () {
-                setState(() => _editing = true);
-              },
+    return BaseScreen(
+      initialIndex: 2,
+      onTap: _onItemTapped,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+             // Custom Header
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Account Detail',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const Spacer(),
+                  if (!_editing)
+                    IconButton(
+                      icon: const Icon(Icons.edit, color: primaryColor),
+                      onPressed: () {
+                        setState(() => _editing = true);
+                      },
+                    ),
+                ],
+              ),
             ),
-        ],
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withValues(alpha: 0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(24),
+                  child: _editing ? _editSection(controller) : _viewSection(),
                 ),
-              ],
+              ),
             ),
-            padding: const EdgeInsets.all(24),
-            child: _editing ? _editSection(controller) : _viewSection(),
-          ),
+          ],
         ),
       ),
     );

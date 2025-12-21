@@ -5,8 +5,7 @@ import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
 import 'package:turnaplay_mobile/modules/user_account/widgets/history_tournament_card.dart';
 import 'package:turnaplay_mobile/providers/user_provider.dart';
-import 'package:turnaplay_mobile/widgets/navbar.dart'; // Import CustomAppBar
-import 'package:turnaplay_mobile/widgets/footer.dart'; // Import footer.dart
+import 'package:turnaplay_mobile/widgets/base_screen.dart';
 import '../../game_account/models/GameAccountFeature.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -17,7 +16,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  int _currentIndex = 2; // Profile screen is the third tab (index 2)
   final Color primaryColor = const Color(0xFF494598);
 
   List<Tournament> _userTournaments = [];
@@ -71,9 +69,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
     if (index == 0) {
       // Navigate to TournamentListScreen (Home)
       Navigator.pushReplacementNamed(context, '/home');
@@ -83,10 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context,
         MaterialPageRoute(builder: (context) => const TournamentCreationForm()),
       ).then((_) {
-        // Reset index to profile when coming back
-        setState(() {
-          _currentIndex = 2;
-        });
+        // Reset index to profile when coming back - Handled by BaseScreen re-render or no-op
       });
     } else if (index == 2) {
       // Already on Profile, do nothing
@@ -95,9 +87,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5), // Light grey background
-      appBar: const Navbar(), // Use Navbar
+    return BaseScreen(
+      initialIndex: 2,
+      onTap: _onItemTapped,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -464,10 +456,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 24), // Bottom padding
           ],
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: _onItemTapped,
       ),
     );
   }
