@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
-import 'package:turnaplay_mobile/widgets/base_screen.dart';
 
 import '../models/TournamentInviteEntry.dart';
 import '../widgets/invite_tile.dart';
@@ -46,26 +44,19 @@ class _InviteListScreenState extends State<InviteListScreen> {
     return (incoming, outgoing);
   }
 
-  void _onItemTapped(int index) {
-    if (index == 0) {
-      Navigator.pushReplacementNamed(context, '/home');
-    } else if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const TournamentForm(),
-        ),
-      );
-    } else if (index == 2) {
-      Navigator.pushReplacementNamed(context, '/profile');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return BaseScreen(
-      initialIndex: 0,
-      onTap: _onItemTapped,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Tournament Invites"),
+        actions: [
+          IconButton(
+            tooltip: "Refresh",
+            onPressed: _reload,
+            icon: const Icon(Icons.refresh),
+          ),
+        ],
+      ),
       body: FutureBuilder<(TournamentInviteResponse, TournamentInviteResponse)>(
         future: _future,
         builder: (context, snapshot) {
