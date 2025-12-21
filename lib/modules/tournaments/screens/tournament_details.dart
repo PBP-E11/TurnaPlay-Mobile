@@ -6,10 +6,25 @@ import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart
 import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
 import 'package:turnaplay_mobile/providers/user_provider.dart';
 
+import 'package:turnaplay_mobile/widgets/base_screen.dart';
+
 class TournamentDetails extends StatelessWidget {
   final Tournament tournament;
 
   const TournamentDetails({super.key, required this.tournament});
+
+  void _onItemTapped(BuildContext context, int index) {
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TournamentForm()),
+      );
+    } else if (index == 2) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    }
+  }
 
   String _formatDate(DateTime date) {
     const List<String> months = [
@@ -96,8 +111,9 @@ class TournamentDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Detail Turnamen')),
+    return BaseScreen(
+      initialIndex: 0,
+      onTap: (index) => _onItemTapped(context, index),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +126,7 @@ class TournamentDetails extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildHeader(context),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Text(
                     tournament.description,
                     style: const TextStyle(
@@ -119,7 +135,7 @@ class TournamentDetails extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildButtons(context),
                 ],
               ),

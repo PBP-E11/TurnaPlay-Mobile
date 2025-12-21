@@ -202,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: InkWell(
                         onTap: () {
-                          // Screen Ambha
+                          Navigator.pushNamed(context, '/dashboard-users');
                         },
                         borderRadius: BorderRadius.circular(16),
                         child: Padding(
