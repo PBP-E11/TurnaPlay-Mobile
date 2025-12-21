@@ -1,1 +1,1 @@
-const String HOST = 'http://localhost:8000';
+const String HOST = '://localhost:8000';
