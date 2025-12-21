@@ -45,7 +45,7 @@ Semua operasi CRUD hanya dapat dilakukan oleh pengguna yang sudah login sesuai h
 * **Delete**: membatalkan invite
 * **Fields**: PK id, FK user.id, FK tournament\_id, status
 
-### 5. Team-member (terikat many-to-many tournament\_registration dan user account) - (Fahri)
+### 5. Team-member (terikat many-to-many tournament\_registration dan user account) - (Fahri + Karla)
 * **Create**: menambahkan akun ke tim
 * **Read**: melihat anggota tim __public__
 * **Update**: ubah akun yang digunakan pada tim
@@ -103,10 +103,11 @@ Game Account
 Team & Registration
 - Daftar Tim Baru -> POST /api/team/create
 - Update Nama Tim -> POST /api/team/update
-- Bubarkan Tim -> DELETE /api/team/delete
-- Masuk Tim -> POST /api/team-member/create
-- Edit Game Account Pada Tim -> POST /api/team-member/edit
-- Keluar dari Tim -> DELETE /api/team-member/delete
+- Dapatkan Detail Tim -> POST /api/team/details
+- Bubarkan Tim -> POST /api/team/delete
+- Masuk Tim -> POST /api/team/member/join
+- Edit Game Account Pada Tim -> POST /api/team/member/update
+- Keluar dari Tim -> POST /api/team/member/delete
 Invite
 - Buat Invite Tim -> POST /api/invites/send
 - Cek Invite Yang Ada -> GET /api/invites/incoming
