@@ -1,57 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/modules/game_account/models/GameAccountAPI.dart';
 import 'package:turnaplay_mobile/modules/game_account/models/GameAccountEntry.dart';
+import 'package:turnaplay_mobile/modules/tournament_registration/models/team_entry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
-import '../screens/view_team.dart';
 import '../util.dart';
 
-class CreateTeamForm extends StatefulWidget {
-  final Tournament tournament; // passed from previous page
-  const CreateTeamForm({super.key, required this.tournament});
+class EditGameAccountForm extends StatefulWidget {
+  final Team team; // passed from previous page
+  final Tournament tournament;
+  const EditGameAccountForm({
+    super.key,
+    required this.team,
+    required this.tournament,
+  });
 
   @override
-  State<CreateTeamForm> createState() => _CreateTeamFormState();
+  State<EditGameAccountForm> createState() => _EditGameAccountFormState();
 }
 
-class _CreateTeamFormState extends State<CreateTeamForm> {
+class _EditGameAccountFormState extends State<EditGameAccountForm> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _teamNameController = TextEditingController();
   List<GameAccountEntry>? _gameAccounts;
   String? _selectedGameAccountId;
   bool _isSubmitting = false;
   bool _isLoading = true;
 
   Future<void> _loadState() async {
-    {
-      final payload = {'tournament_id': widget.tournament.id};
+    _gameAccounts = await context.read<GameAccountApi>().fetchAccounts(
+      gameId: widget.tournament.gameId,
+    );
 
-      final responseBody = await sendPost(
-        context.read<CookieRequest>(),
-        'api/team/details/',
-        payload,
-      );
-      if (responseBody != null && mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ViewTeam(tournament: widget.tournament),
-          ),
-        );
-        return;
-      }
-    }
-
-    if (mounted) {
-      _gameAccounts = await context.read<GameAccountApi>().fetchAccounts(
-        gameId: widget.tournament.gameId,
-      );
-
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<void> _submitForm() async {
@@ -60,28 +42,18 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
     }
 
     final payload = {
-      'tournament_id': widget.tournament.id,
-      'leader_game_account_id': _selectedGameAccountId,
-      'team_name': _teamNameController.text,
+      'team_id': widget.team.teamId,
+      'game_account_id': _selectedGameAccountId,
     };
 
     setState(() => _isSubmitting = true);
     final responseBody = await sendPost(
       context.read(),
-      'api/team/create/',
+      'api/team/member/update/',
       payload,
     );
-    if (responseBody != null) {
-      debugPrint('Submitted form and got: $responseBody');
-
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ViewTeam(tournament: widget.tournament),
-          ),
-        );
-      }
+    if (responseBody != null && mounted) {
+      Navigator.pop(context);
     }
     setState(() => _isSubmitting = false);
   }
@@ -104,14 +76,13 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
       );
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Team')),
+      appBar: AppBar(title: const Text('Change Game Account')),
       body: Padding(
         padding: EdgeInsetsGeometry.all(16),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
-              // Leader dropdown
               DropdownButtonFormField<String>(
                 hint: const Text('Select Game Account'),
                 items: _gameAccounts!
@@ -127,22 +98,13 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
                 validator: (val) =>
                     val == null ? 'Please select a game account' : null,
               ),
-              const SizedBox(height: 16),
-              // Team name
-              TextFormField(
-                controller: _teamNameController,
-                decoration: const InputDecoration(labelText: 'Team Name'),
-                validator: (val) => val == null || val.isEmpty
-                    ? 'Please enter a team name'
-                    : null,
-              ),
               const SizedBox(height: 24),
               // Submit button
               ElevatedButton(
                 onPressed: _isSubmitting ? null : _submitForm,
                 child: _isSubmitting
                     ? const CircularProgressIndicator()
-                    : const Text('Create Team'),
+                    : const Text('Change Game Account'),
               ),
             ],
           ),
