@@ -16,9 +16,7 @@ class LoginApp extends StatelessWidget {
       title: 'Login',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF494598),
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF494598)),
       ),
       home: const LoginPage(),
     );
@@ -53,10 +51,8 @@ class _LoginPageState extends State<LoginPage> {
                 ClipPath(
                   clipper: HeaderWaveClipper(),
                   child: Container(
-                    height: 240, 
-                    decoration: BoxDecoration(
-                      color: primaryColor,
-                    ),
+                    height: 240,
+                    decoration: BoxDecoration(color: primaryColor),
                     child: Stack(
                       children: [
                         Positioned.fill(
@@ -99,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ],
             ),
-            
+
             // 2. Form Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -119,10 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 8.0),
                   Text(
                     "Please sign in to continue",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                   const SizedBox(height: 30.0),
 
@@ -130,19 +123,24 @@ class _LoginPageState extends State<LoginPage> {
                   TextFormField(
                     controller: _usernameController,
                     decoration: InputDecoration(
-                      labelText: 'Username or Email Address', 
+                      labelText: 'Username or Email Address',
                       labelStyle: TextStyle(
-                        color: Colors.grey[600], 
-                        fontWeight: FontWeight.w500
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
                       ),
-                      prefixIcon: Icon(Icons.email_outlined, color: primaryColor),
+                      prefixIcon: Icon(
+                        Icons.email_outlined,
+                        color: primaryColor,
+                      ),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey[300]!),
                       ),
                       focusedBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: primaryColor),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -160,17 +158,22 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       labelText: 'Password',
                       labelStyle: TextStyle(
-                        color: Colors.grey[600], 
-                        fontWeight: FontWeight.w500
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
                       ),
-                      prefixIcon: Icon(Icons.vpn_key_outlined, color: primaryColor),
+                      prefixIcon: Icon(
+                        Icons.vpn_key_outlined,
+                        color: primaryColor,
+                      ),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey[300]!),
                       ),
                       focusedBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: primaryColor),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -180,8 +183,9 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
 
-                  const SizedBox(height: 24.0), // Space between Forget Password? and Login Button
-
+                  const SizedBox(
+                    height: 24.0,
+                  ), // Space between Forget Password? and Login Button
                   // Login Button
                   ElevatedButton(
                     onPressed: () async {
@@ -198,27 +202,27 @@ class _LoginPageState extends State<LoginPage> {
                       if (request.loggedIn) {
                         String message = response['message'];
                         String uname = response['username'];
-                        
+
                         // Parse role and isAdmin
                         String role = response['role'] ?? 'user';
                         bool isAdmin = response['is_admin'] ?? false;
                         String email = response['email'] ?? '';
                         String displayName = response['display_name'] ?? '';
-                        
+
                         if (context.mounted) {
-                           await Provider.of<UserProvider>(context, listen: false).login(
-                             uname, 
-                             role, 
-                             isAdmin, 
-                             email: email, 
-                             displayName: displayName
-                           );
-                           
-                           if (context.mounted) {
-                             Navigator.pushReplacementNamed(
-                              context,
-                              '/home',
-                            );
+                          await Provider.of<UserProvider>(
+                            context,
+                            listen: false,
+                          ).login(
+                            uname,
+                            role,
+                            isAdmin,
+                            email: email,
+                            displayName: displayName,
+                          );
+
+                          if (context.mounted) {
+                            Navigator.pushReplacementNamed(context, '/home');
                             ScaffoldMessenger.of(context)
                               ..hideCurrentSnackBar()
                               ..showSnackBar(
@@ -226,7 +230,7 @@ class _LoginPageState extends State<LoginPage> {
                                   content: Text("$message Welcome, $uname."),
                                 ),
                               );
-                           }
+                          }
                         }
                       } else {
                         if (context.mounted) {
@@ -268,8 +272,6 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  
-
 
                   const SizedBox(height: 40.0),
 
@@ -277,10 +279,7 @@ class _LoginPageState extends State<LoginPage> {
                   Center(
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/register',
-                        );
+                        Navigator.pushNamed(context, '/register');
                       },
                       child: Text.rich(
                         TextSpan(
@@ -316,15 +315,23 @@ class HeaderWaveClipper extends CustomClipper<Path> {
     var path = Path();
     // Start at top-left
     path.lineTo(0, size.height * 0.75);
-    
-    var controlPoint = Offset(size.width * 0.5, size.height); // Bottom center pull
+
+    var controlPoint = Offset(
+      size.width * 0.5,
+      size.height,
+    ); // Bottom center pull
     var endPoint = Offset(size.width, size.height * 0.75);
-    
-    path.quadraticBezierTo(controlPoint.dx, controlPoint.dy, endPoint.dx, endPoint.dy);
-    
+
+    path.quadraticBezierTo(
+      controlPoint.dx,
+      controlPoint.dy,
+      endPoint.dx,
+      endPoint.dy,
+    );
+
     path.lineTo(size.width, 0);
     path.close();
-    
+
     return path;
   }
 
