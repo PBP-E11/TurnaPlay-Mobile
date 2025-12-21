@@ -15,7 +15,7 @@ class InvitePopupPoller extends StatefulWidget {
     super.key,
     required this.child,
     required this.onOpenInvites,
-    this.baseUrl = "http://127.0.0.1:8000",
+    this.baseUrl = "http://localhost:8000",
     this.interval = const Duration(seconds: 10),
     this.onAfterDialog,
   });
