@@ -1,22 +1,28 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
+import 'package:turnaplay_mobile/modules/tournaments/models/GameEntry.dart';
+import 'package:turnaplay_mobile/modules/tournaments/models/TournamentFormatEntry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
 import 'package:turnaplay_mobile/modules/tournaments/widgets/tournament_card.dart';
+import 'package:turnaplay_mobile/widgets/navbar.dart'; // Import CustomAppBar
+import 'package:turnaplay_mobile/widgets/footer.dart'; // Import footer.dart
+import 'package:turnaplay_mobile/settings.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class TournamentListScreen extends StatefulWidget {
+  const TournamentListScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<TournamentListScreen> createState() => _TournamentListScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _TournamentListScreenState extends State<TournamentListScreen> {
   final Color primaryColor = const Color(0xFF494598);
   final ScrollController _scrollController = ScrollController();
   bool _showButton = false;
+  final GlobalKey _activeTournamentsKey = GlobalKey();
+  int _currentIndex = 0; // State for BottomNavigationBar
 
   // Pagination State
   List<Tournament> _tournaments = [];
@@ -24,14 +30,101 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isLoading = false;
   bool _hasMore = true;
 
+  // Game Filter State
+  List<Game> _games = [];
+  List<TournamentFormat> _formats = [];
+  String? _selectedGameId; // null means "All"
+
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
     // Fetch initial data
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchGamesAndFormats();
       _fetchTournaments();
     });
+  }
+
+  Future<void> _fetchGamesAndFormats() async {
+    final request = context.read<CookieRequest>();
+
+    try {
+      // Fetch Games
+      final gamesResponse = await request.get('$HOST/api/tournaments/games/');
+      debugPrint("Games Response: $gamesResponse");
+      debugPrint("Games Response Type: ${gamesResponse.runtimeType}");
+
+      if (gamesResponse != null) {
+        List<Game> fetchedGames = [];
+        if (gamesResponse is List) {
+          fetchedGames = gamesResponse
+              .map((x) => Game.fromJson(x as Map<String, dynamic>))
+              .toList();
+        } else if (gamesResponse is Map<String, dynamic>) {
+          if (gamesResponse.containsKey('game')) {
+            fetchedGames = (gamesResponse['game'] as List)
+                .map((x) => Game.fromJson(x as Map<String, dynamic>))
+                .toList();
+          }
+        }
+        debugPrint("Fetched ${fetchedGames.length} games");
+
+        setState(() {
+          _games = fetchedGames;
+        });
+      }
+
+      // Fetch Formats
+      final formatsResponse = await request.get(
+        '$HOST/api/tournaments/formats/',
+      );
+      debugPrint("Formats Response: $formatsResponse");
+      debugPrint("Formats Response Type: ${formatsResponse.runtimeType}");
+
+      if (formatsResponse != null) {
+        List<TournamentFormat> fetchedFormats = [];
+        if (formatsResponse is List) {
+          fetchedFormats = formatsResponse
+              .map((x) => TournamentFormat.fromJson(x as Map<String, dynamic>))
+              .toList();
+        } else if (formatsResponse is Map<String, dynamic>) {
+          if (formatsResponse.containsKey('tournament_format')) {
+            fetchedFormats = (formatsResponse['tournament_format'] as List)
+                .map(
+                  (x) => TournamentFormat.fromJson(x as Map<String, dynamic>),
+                )
+                .toList();
+          }
+        }
+        debugPrint("Fetched ${fetchedFormats.length} formats");
+
+        setState(() {
+          _formats = fetchedFormats;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error fetching games/formats: $e");
+    }
+  }
+
+  String? _getGameIdFromFormatId(String formatId) {
+    final format = _formats.where((f) => f.id == formatId).toList();
+    if (format.isNotEmpty) {
+      return format.first.gameId;
+    }
+    return null;
+  }
+
+  List<Tournament> get _filteredTournaments {
+    if (_selectedGameId == null) {
+      // Show all tournaments when "All" is selected
+      return _tournaments;
+    }
+    return _tournaments.where((tournament) {
+      final gameId = _getGameIdFromFormatId(tournament.tournamentFormatId);
+      return gameId == _selectedGameId;
+    }).toList();
   }
 
   Future<void> _fetchTournaments() async {
@@ -45,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       // Using pbp_django_auth's request.get which returns dynamic (decoded JSON)
       final response = await request.get(
-        'http://localhost:8000/api/tournaments/list/?page=$_page',
+        '$HOST/api/tournaments/list/?page=$_page',
       );
 
       // Debug print to check response structure
@@ -93,20 +186,43 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _scrollListener() {
-    // FAB Logic
-    if (_scrollController.offset > 100 && !_showButton) {
-      setState(() {
-        _showButton = true;
-      });
-    } else if (_scrollController.offset <= 100 && _showButton) {
-      setState(() {
-        _showButton = false;
-      });
-    }
-
     // Pagination Logic: Fetch when 200px from bottom
     if (_scrollController.position.extentAfter < 200) {
       _fetchTournaments();
+    }
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    if (index == 0) {
+      // Already on Home
+    } else if (index == 1) {
+      // Navigate to Create Tournament
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TournamentCreationForm()),
+      ).then((result) {
+        // Reset index to home when coming back
+        setState(() {
+          _currentIndex = 0;
+        });
+
+        // If a tournament was created, refresh the list
+        if (result == true) {
+          setState(() {
+            _tournaments.clear();
+            _page = 1;
+            _hasMore = true;
+            _isLoading = false;
+          });
+          _fetchTournaments();
+        }
+      });
+    } else if (index == 2) {
+      // Navigate to ProfileScreen
+      Navigator.pushReplacementNamed(context, '/profile');
     }
   }
 
@@ -117,38 +233,29 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  void _scrollToActiveTournaments() {
+    final ctx = _activeTournamentsKey.currentContext;
+    if (ctx != null) {
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      // Fallback: scroll to a reasonable offset
+      _scrollController.animateTo(
+        400,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5), // Light grey background
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F5F5),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.search, color: Colors.black, size: 28),
-          onPressed: () {},
-        ),
-        title: const Text(
-          'TurnaPlay',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.account_circle_outlined,
-              color: Colors.black,
-              size: 28,
-            ),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
+      appBar: const Navbar(), // Use Navbar
       body: SingleChildScrollView(
         controller: _scrollController,
         child: Column(
@@ -204,7 +311,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              _scrollToActiveTournaments();
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: primaryColor, // Vibrant Purple
                               foregroundColor: Colors.white,
@@ -247,11 +356,28 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 children: [
-                  _buildGameChip("Mobile Legends", true),
-                  _buildGameChip("PUBG", false),
-                  _buildGameChip("Valorant", false),
-                  _buildGameChip("Free Fire", false),
-                  _buildGameChip("Dota 2", false),
+                  // "All" chip
+                  _buildGameChip(
+                    "All",
+                    _selectedGameId == null,
+                    onPressed: () {
+                      setState(() {
+                        _selectedGameId = null;
+                      });
+                    },
+                  ),
+                  // Dynamic game chips
+                  ..._games.map((game) {
+                    return _buildGameChip(
+                      game.name,
+                      _selectedGameId == game.id,
+                      onPressed: () {
+                        setState(() {
+                          _selectedGameId = game.id;
+                        });
+                      },
+                    );
+                  }),
                 ],
               ),
             ),
@@ -260,6 +386,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
             // Active Tournaments Header
             Padding(
+              key: _activeTournamentsKey,
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: const Text(
                 "Active Tournaments",
@@ -278,9 +405,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 primary: false, // Using parent scroll controller
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: _tournaments.length + (_isLoading ? 1 : 0),
+                itemCount: _filteredTournaments.length + (_isLoading ? 1 : 0),
                 itemBuilder: (context, index) {
-                  if (index == _tournaments.length) {
+                  if (index == _filteredTournaments.length) {
                     return const Center(
                       child: Padding(
                         padding: EdgeInsets.all(16.0),
@@ -288,17 +415,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     );
                   }
-                  return TournamentCard(tournament: _tournaments[index]);
+                  return TournamentCard(
+                    tournament: _filteredTournaments[index],
+                  );
                 },
               ),
             ),
 
             // Empty State / Error Hint
-            if (_tournaments.isEmpty && !_isLoading)
+            if (_filteredTournaments.isEmpty && !_isLoading)
               const Center(
                 child: Padding(
                   padding: EdgeInsets.all(32.0),
-                  child: Text("No active tournaments found."),
+                  child: Text("No tournaments found for this game."),
                 ),
               ),
 
@@ -306,33 +435,22 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _showButton
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const TournamentCreationForm(),
-                  ),
-                );
-              },
-              backgroundColor: primaryColor,
-              label: const Text(
-                'Create Tournament',
-                style: TextStyle(color: Colors.white),
-              ),
-              icon: const Icon(Icons.add, color: Colors.white),
-            )
-          : null,
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
+      ),
     );
   }
 
-  Widget _buildGameChip(String label, bool isActive) {
+  Widget _buildGameChip(
+    String label,
+    bool isActive, {
+    required VoidCallback onPressed,
+  }) {
     return Container(
       margin: const EdgeInsets.only(right: 12),
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: isActive ? primaryColor : const Color(0xFFE0D4FC),
           foregroundColor: isActive ? Colors.white : Colors.black87,

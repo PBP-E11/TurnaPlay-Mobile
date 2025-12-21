@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:turnaplay_mobile/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -110,10 +110,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 8.0),
                   Text(
                     "Create your new account",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                   const SizedBox(height: 30.0),
 
@@ -250,7 +247,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       String password2 = _confirmPasswordController.text;
 
                       final response = await request.postJson(
-                        "http://localhost:8000/api/accounts/register/",
+                        "$HOST/api/accounts/register/",
                         jsonEncode({
                           "username": username,
                           "email": email,
@@ -265,12 +262,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               content: Text('Successfully registered!'),
                             ),
                           );
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LoginPage(),
-                            ),
-                          );
+                          Navigator.pushReplacementNamed(context, '/login');
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(

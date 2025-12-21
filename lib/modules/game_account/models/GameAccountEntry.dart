@@ -4,57 +4,43 @@
 
 import 'dart:convert';
 
-GameAccountEntry gameAccountEntryFromJson(String str) =>
-    GameAccountEntry.fromJson(json.decode(str));
+List<GameAccountEntry> gameAccountEntryFromJson(String str) => List<GameAccountEntry>.from(json.decode(str).map((x) => GameAccountEntry.fromJson(x)));
 
-String gameAccountEntryToJson(GameAccountEntry data) =>
-    json.encode(data.toJson());
+String gameAccountEntryToJson(List<GameAccountEntry> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class GameAccountEntry {
-  List<GameAccount> gameAccounts;
+    final String id;
+    final String? user;
+    final String? game;
+    final String? gameName;
+    final String ingameName;
+    final bool active;
 
-  GameAccountEntry({required this.gameAccounts});
 
-  factory GameAccountEntry.fromJson(Map<String, dynamic> json) =>
-      GameAccountEntry(
-        gameAccounts: List<GameAccount>.from(
-          json["game_accounts"].map((x) => GameAccount.fromJson(x)),
-        ),
-      );
+    GameAccountEntry({
+        required this.id,
+        this.user,
+        this.game,
+        this.gameName,
+        required this.ingameName,
+        required this.active,
+    });
 
-  Map<String, dynamic> toJson() => {
-    "game_accounts": List<dynamic>.from(gameAccounts.map((x) => x.toJson())),
-  };
-}
+    factory GameAccountEntry.fromJson(Map<String, dynamic> json) => GameAccountEntry(
+        id: json["id"].toString(),
+        user: json["user"]?.toString(),
+        game: json["game"]?.toString(),
+        gameName: json["game_name"]?.toString(),
+        ingameName: json["ingame_name"] ?? '',
+        active: json["active"] ?? true,
+    );
 
-class GameAccount {
-  String id;
-  int userId;
-  int gameId;
-  String ingameName;
-  bool active;
-
-  GameAccount({
-    required this.id,
-    required this.userId,
-    required this.gameId,
-    required this.ingameName,
-    required this.active,
-  });
-
-  factory GameAccount.fromJson(Map<String, dynamic> json) => GameAccount(
-    id: json["id"] ?? "",
-    userId: json["user_id"] ?? 0,
-    gameId: json["game_id"] ?? 0,
-    ingameName: json["ingame_name"] ?? "",
-    active: json["active"] ?? false,
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "user_id": userId,
-    "game_id": gameId,
-    "ingame_name": ingameName,
-    "active": active,
-  };
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "user": user,
+        "game": game,
+        "game_name": gameName,
+        "ingame_name": ingameName,
+        "active": active,
+    };
 }
