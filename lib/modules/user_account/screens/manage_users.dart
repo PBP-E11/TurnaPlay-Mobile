@@ -150,6 +150,9 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 const CircleAvatar(
                   radius: 16,
                   backgroundColor: Colors.white,
+                  backgroundImage: AssetImage(
+                    "static/profile/photoprofile.jpeg",
+                  ), // Local asset
                   child: Icon(Icons.person, color: Colors.deepPurple, size: 20),
                 ),
                 const SizedBox(width: 8),
@@ -159,13 +162,34 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
               ],
             ),
             onSelected: (value) {
-              if (value == 'logout') {
+              if (value == 'home') {
+                // Navigate to home
+                Navigator.pushReplacementNamed(context, '/home');
+              } else if (value == 'logout') {
                 _showLogoutDialog();
               }
             },
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: 'home', child: Text('Homepage')),
-              const PopupMenuItem(value: 'logout', child: Text('Logout')),
+            itemBuilder: (context) => const [
+              PopupMenuItem(
+                value: 'home',
+                child: Row(
+                  children: [
+                    Icon(Icons.home, size: 20, color: Colors.black87),
+                    SizedBox(width: 12),
+                    Text('Homepage'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'logout',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout, size: 20, color: Colors.red),
+                    SizedBox(width: 12),
+                    Text('Logout', style: TextStyle(color: Colors.red)),
+                  ],
+                ),
+              ),
             ],
           ),
         ],
@@ -493,29 +517,38 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                SizedBox(height: 8),
+                Text(
+                  'Admin Dashboard',
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
               ],
             ),
           ),
           ListTile(
             leading: const Icon(Icons.people),
             title: const Text('Manage Users'),
-            selected: true,
-            onTap: () => Navigator.pop(context),
+            selected: true, // ✅ Menandai halaman aktif
+            selectedTileColor: Colors.deepPurple.withOpacity(0.1),
+            onTap: () => Navigator.pop(context), // Tutup drawer saja
           ),
           ListTile(
             leading: const Icon(Icons.emoji_events),
             title: const Text('Manage Tournaments'),
             onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ManageTournamentsScreen(),
-                ),
-              );
+              Navigator.pop(context); // Tutup drawer
+              Navigator.pushReplacementNamed(context, '/dashboard-tournaments');
             },
           ),
           const Divider(),
+          ListTile(
+            leading: const Icon(Icons.home),
+            title: const Text('Back to Home'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, '/home');
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text('Log Out', style: TextStyle(color: Colors.red)),

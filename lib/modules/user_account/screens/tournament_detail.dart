@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -86,9 +88,9 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
 
     final request = context.read<CookieRequest>();
     try {
-      final response = await request.postJson(
-        'http://localhost:8000/api/accounts/dashboard/tournaments/${widget.tournamentId}/delete/',
-        '{}',
+      final response = await request.post(
+        'http://localhost:8000/api/accounts/dashboard/tournaments/delete/',
+        jsonEncode({'tournament_id': _tournament?['id']}),
       );
 
       if (response['status'] == true) {

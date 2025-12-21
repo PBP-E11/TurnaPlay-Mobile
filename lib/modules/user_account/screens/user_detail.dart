@@ -169,26 +169,10 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         // Avatar
                         CircleAvatar(
                           radius: 50,
-                          backgroundImage:
-                              _user?['profile_image'] != null &&
-                                  _user!['profile_image'].isNotEmpty
-                              ? NetworkImage(_user!['profile_image'])
-                              : null,
+                          backgroundImage: AssetImage(
+                            "static/profile/photoprofile.jpeg",
+                          ), // Local asset
                           backgroundColor: Colors.white,
-                          child:
-                              _user!['profile_image'] == null ||
-                                  _user!['profile_image'].isEmpty
-                              ? Text(
-                                  (_user!['display_name'] ??
-                                          _user!['username'])[0]
-                                      .toUpperCase(),
-                                  style: const TextStyle(
-                                    fontSize: 36,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.deepPurple,
-                                  ),
-                                )
-                              : null,
                         ),
                         const SizedBox(width: 24),
                         Expanded(

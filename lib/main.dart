@@ -8,6 +8,8 @@ import 'package:turnaplay_mobile/modules/tournaments/screens/tournament_list.dar
 import 'package:turnaplay_mobile/modules/user_account/screens/profile_screen.dart';
 import 'modules/game_account/models/GameAccountAPI.dart';
 import 'modules/game_account/models/GameAccountController.dart';
+import 'modules/user_account/screens/manage_users.dart';
+import 'modules/user_account/screens/manage_tournaments.dart';
 
 void main() {
   runApp(
@@ -49,6 +51,8 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const ProfileScreen(),
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
+        '/dashboard-users': (context) => const ManageUsersScreen(),
+        '/dashboard-tournaments': (context) => const ManageTournamentsScreen(),
       },
     );
   }

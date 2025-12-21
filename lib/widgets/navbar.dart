@@ -20,7 +20,8 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const TournamentSearchScreen()),
+              builder: (context) => const TournamentSearchScreen(),
+            ),
           );
         },
       ),
@@ -44,69 +45,74 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
             if (value == 'profile') {
               // Check if we are already on the profile page to avoid stacking
               if (ModalRoute.of(context)?.settings.name != '/profile') {
-                 Navigator.pushNamed(context, '/profile');
+                Navigator.pushNamed(context, '/profile');
               }
             } else if (value == 'dashboard') {
-               // Navigate to Admin Dashboard
-               Navigator.pushNamed(context, '/admin_dashboard');
+              // Navigate to Admin Dashboard
+              Navigator.pushNamed(context, '/dashboard-users');
             } else if (value == 'logout') {
               final request = context.read<CookieRequest>();
               final response = await request.logout(
                 "http://localhost:8000/api/accounts/logout/",
               );
               String message = response["message"];
-              
+
               // Clear local user state
               if (context.mounted) {
-                  await Provider.of<UserProvider>(context, listen: false).logout();
+                await Provider.of<UserProvider>(
+                  context,
+                  listen: false,
+                ).logout();
               }
 
               if (context.mounted) {
                 if (response['status']) {
                   String uname = response["username"];
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("$message Goodbye, $uname."),
-                    ),
+                    SnackBar(content: Text("$message Goodbye, $uname.")),
                   );
                   Navigator.pushReplacementNamed(context, "/login");
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(message),
-                    ),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(message)));
                 }
               }
             }
           },
           itemBuilder: (BuildContext context) {
             return [
-            const PopupMenuItem<String>(
-              value: 'profile',
-              child: Text('My Profile'),
-            ),
-            if (userProvider.isAdmin)
               const PopupMenuItem<String>(
-                value: 'dashboard',
-                child: Text('Dashboard'),
+                value: 'profile',
+                child: Text('My Profile'),
               ),
-            PopupMenuItem<String>(
-              value: 'logout',
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(4),
+              if (userProvider.isAdmin)
+                const PopupMenuItem<String>(
+                  value: 'dashboard',
+                  child: Text('Dashboard'),
                 ),
-                child: const Text(
-                  'Logout',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              PopupMenuItem<String>(
+                value: 'logout',
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Text(
+                    'Logout',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ];
+            ];
           },
         ),
         const SizedBox(width: 8),
