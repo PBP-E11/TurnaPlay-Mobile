@@ -15,7 +15,7 @@ class InvitePopupPoller extends StatefulWidget {
     super.key,
     required this.child,
     required this.onOpenInvites,
-    this.baseUrl = "http://127.0.0.1:8000",
+    this.baseUrl = "$HOST:8000",
     this.interval = const Duration(seconds: 10),
     this.onAfterDialog,
   });
@@ -75,10 +75,13 @@ class _InvitePopupPollerState extends State<InvitePopupPoller> {
       return;
     }
 
-    final pendingCount = (map["pending_count"] is int) ? map["pending_count"] as int : 0;
+    final pendingCount = (map["pending_count"] is int)
+        ? map["pending_count"] as int
+        : 0;
     final latestCreatedAt = map["latest_created_at"] as String?;
 
-    final hasNew = pendingCount > 0 &&
+    final hasNew =
+        pendingCount > 0 &&
         latestCreatedAt != null &&
         latestCreatedAt.isNotEmpty &&
         latestCreatedAt != _lastSeenLatestCreatedAt;

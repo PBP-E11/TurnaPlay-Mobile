@@ -2,13 +2,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 Future<Map?> sendPost(CookieRequest request, String path, Map payload) async {
   try {
-    final responseBody = await request.post(
-      'http://localhost:8000/$path',
-      jsonEncode(payload),
-    );
+    final responseBody = await request.post('$HOST/$path', jsonEncode(payload));
 
     if (responseBody['success'] == true) {
       return responseBody['data'];

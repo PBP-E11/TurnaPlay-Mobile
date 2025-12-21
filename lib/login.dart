@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/providers/user_provider.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 void main() {
   runApp(const LoginApp());
@@ -195,7 +196,7 @@ class _LoginPageState extends State<LoginPage> {
                       // Check credentials
                       // Use localhost:8000 for web/iOS simulator, or 10.0.2.2 for Android emulator
                       final response = await request.login(
-                        "http://localhost:8000/api/accounts/login/",
+                        "$HOST/api/accounts/login/",
                         {'username': username, 'password': password},
                       );
 

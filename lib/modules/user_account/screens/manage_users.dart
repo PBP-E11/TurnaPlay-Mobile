@@ -5,6 +5,7 @@ import '../models/UserAccountEntry.dart';
 import 'create_organizer.dart';
 import 'user_detail.dart';
 import 'manage_tournaments.dart';
+import 'package:turnaplay_mobile/settings.dart';
 import 'dart:convert';
 
 class ManageUsersScreen extends StatefulWidget {
@@ -42,8 +43,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     final request = context.read<CookieRequest>();
 
     try {
-      String url =
-          'http://localhost:8000/api/accounts/dashboard/users/?page=1&page_size=100';
+      String url = '$HOST/api/accounts/dashboard/users/?page=1&page_size=100';
 
       if (_selectedRole != null && _selectedRole!.isNotEmpty) {
         url += '&role=$_selectedRole';
@@ -104,7 +104,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.post(
-        'http://localhost:8000/api/accounts/dashboard/users/delete/',
+        '$HOST/api/accounts/dashboard/users/delete/',
         jsonEncode({'user_id': userId}),
       );
 
@@ -573,9 +573,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             onPressed: () async {
               final request = context.read<CookieRequest>();
               try {
-                await request.logout(
-                  'http://localhost:8000/api/accounts/logout/',
-                );
+                await request.logout('$HOST/api/accounts/logout/');
                 if (mounted)
                   Navigator.pushNamedAndRemoveUntil(
                     context,

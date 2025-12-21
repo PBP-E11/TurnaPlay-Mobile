@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/settings.dart';
 import 'dart:convert';
 
 class EditTournamentScreen extends StatefulWidget {
@@ -95,7 +96,7 @@ class _EditTournamentScreenState extends State<EditTournamentScreen> {
 
     try {
       final response = await request.post(
-        'http://localhost:8000/api/accounts/dashboard/tournaments/update/',
+        '$HOST/api/accounts/dashboard/tournaments/update/',
         jsonEncode({
           'tournament_id': widget.tournamentId,
           'tournament_name': _tournamentNameController.text,

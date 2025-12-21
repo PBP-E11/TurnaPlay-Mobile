@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 import '../models/TournamentInviteEntry.dart';
 import '../widgets/invite_tile.dart';
@@ -14,7 +15,7 @@ class InviteListScreen extends StatefulWidget {
 
 class _InviteListScreenState extends State<InviteListScreen> {
   late Future<(TournamentInviteResponse, TournamentInviteResponse)> _future;
-  static const String baseUrl = "http://127.0.0.1:8000";
+  static const String baseUrl = "$HOST:8000";
 
   @override
   void initState() {
