@@ -7,6 +7,9 @@
 - Muhammad Hadziqul Falah Teguh - 2406437432
 - Tangguh Ambha Wahyuga - 2406361536
 
+## Download
+Download aplikasi versi terbaru: [Download APK](https://app.bitrise.io/app/226353bf-9ef4-4b88-9e6a-5b49841f802e/installable-artifacts/4f630cbbd267f62f/public-install-page/d66c6d5a9785bb9643c9fd6373fb8a5d)
+
 ## Deskripsi Aplikasi
 
 TurnaPlay adalah sebuah aplikasi yang berfungsi sebagai pusat informasi turnamen esport di Indonesia. Platform ini hadir untuk menjawab masalah yang sering dialami para gamers, yaitu sulitnya menemukan informasi lomba karena tersebar di berbagai akun media sosial seperti instagram. Melalui TurnaPlay, semua informasi turnamen dikumpulkan, disaring, dan diverifikasi agar pengguna bisa mendapatkan data yang akurat dan terstruktur dalam satu tempat. 
