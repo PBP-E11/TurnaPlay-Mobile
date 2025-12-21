@@ -227,7 +227,10 @@ class _TournamentSearchScreenState extends State<TournamentSearchScreen> {
       padding: const EdgeInsets.all(16.0),
       itemCount: _searchResults.length,
       itemBuilder: (context, index) {
-        return TournamentCard(tournament: _searchResults[index]);
+        return TournamentCard(
+          tournament: _searchResults[index],
+          onUpdate: () => _searchTournaments(_searchController.text),
+        );
       },
     );
   }

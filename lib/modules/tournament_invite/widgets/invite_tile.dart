@@ -5,6 +5,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
 import '../models/TournamentInviteEntry.dart';
+import '../screens/game_account_picker_dialog.dart';
 
 enum InviteTileKind { incoming, outgoing }
 
@@ -22,50 +23,36 @@ class InviteTile extends StatelessWidget {
     required this.onChanged,
   });
 
+  bool get _isPending => invite.status.toLowerCase() == "pending";
+
   Future<void> _showSnack(BuildContext context, String text) async {
     ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(text)),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
-  Future<int?> _askGameAccountId(BuildContext context) async {
-    final controller = TextEditingController();
+  Future<String?> _pickGameAccountId(BuildContext context) async {
     final result = await showDialog<String?>(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Choose Game Account"),
-          content: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: "game_account_id",
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, null),
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context, controller.text.trim()),
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
+      builder: (_) => const GameAccountPickerDialog(),
     );
+    if (result == null || result.trim().isEmpty) return null;
+    return result.trim();
+  }
 
-    if (result == null || result.isEmpty) return null;
-    return int.tryParse(result);
+  String _extractErrorMessage(dynamic res) {
+    if (res is Map) {
+      if (res["error"] != null) return res["error"].toString();
+      if (res["message"] != null) return res["message"].toString();
+      if (res["detail"] != null) return res["detail"].toString();
+    }
+    return "Request failed";
   }
 
   Future<void> _postRespond(
     BuildContext context, {
     required String inviteId,
     required String action,
-    int? gameAccountId,
+    String? gameAccountId,
   }) async {
     final request = context.read<CookieRequest>();
 
@@ -85,10 +72,7 @@ class InviteTile extends StatelessWidget {
 
     final ok = (res is Map && res["ok"] == true);
     if (!ok) {
-      final msg = (res is Map && res["message"] != null)
-          ? res["message"].toString()
-          : "Request failed";
-      await _showSnack(context, msg);
+      await _showSnack(context, _extractErrorMessage(res));
       return;
     }
 
@@ -106,10 +90,7 @@ class InviteTile extends StatelessWidget {
 
     final ok = (res is Map && res["ok"] == true);
     if (!ok) {
-      final msg = (res is Map && res["message"] != null)
-          ? res["message"].toString()
-          : "Request failed";
-      await _showSnack(context, msg);
+      await _showSnack(context, _extractErrorMessage(res));
       return;
     }
 
@@ -132,6 +113,8 @@ class InviteTile extends StatelessWidget {
   }
 
   Widget _buildActions(BuildContext context) {
+    if (!_isPending) return const SizedBox.shrink();
+
     if (kind == InviteTileKind.incoming) {
       return Wrap(
         spacing: 8,
@@ -148,16 +131,16 @@ class InviteTile extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () async {
-              final id = await _askGameAccountId(context);
-              if (id == null) {
-                await _showSnack(context, "Invalid game_account_id");
+              final gameAccountId = await _pickGameAccountId(context);
+              if (gameAccountId == null) {
+                await _showSnack(context, "No game account selected");
                 return;
               }
               await _postRespond(
                 context,
                 inviteId: invite.id,
                 action: "accept",
-                gameAccountId: id,
+                gameAccountId: gameAccountId,
               );
             },
             child: const Text("Accept"),

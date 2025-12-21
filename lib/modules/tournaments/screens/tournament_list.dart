@@ -6,6 +6,7 @@ import 'package:turnaplay_mobile/modules/tournaments/models/GameEntry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentFormatEntry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
 import 'package:turnaplay_mobile/modules/tournaments/widgets/tournament_card.dart';
+import 'package:turnaplay_mobile/widgets/base_screen.dart';
 import 'package:turnaplay_mobile/widgets/navbar.dart'; // Import CustomAppBar
 import 'package:turnaplay_mobile/widgets/footer.dart'; // Import footer.dart
 import 'package:turnaplay_mobile/settings.dart';
@@ -20,10 +21,8 @@ class TournamentListScreen extends StatefulWidget {
 class _TournamentListScreenState extends State<TournamentListScreen> {
   final Color primaryColor = const Color(0xFF494598);
   final ScrollController _scrollController = ScrollController();
-  bool _showButton = false;
   final GlobalKey _activeTournamentsKey = GlobalKey();
-  int _currentIndex = 0; // State for BottomNavigationBar
-
+  
   // Pagination State
   List<Tournament> _tournaments = [];
   int _page = 1;
@@ -192,33 +191,31 @@ class _TournamentListScreenState extends State<TournamentListScreen> {
     }
   }
 
-  void _onItemTapped(int index) {
+  void _refreshList() {
     setState(() {
-      _currentIndex = index;
+      _tournaments.clear();
+      _page = 1;
+      _hasMore = true;
+      _isLoading = false;
     });
+    _fetchTournaments();
+  }
+
+  void _onItemTapped(int index) {
     if (index == 0) {
       // Already on Home
     } else if (index == 1) {
       // Navigate to Create Tournament
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const TournamentCreationForm()),
+        MaterialPageRoute(
+          builder: (context) => const TournamentForm(),
+        ),
       ).then((result) {
-        // Reset index to home when coming back
-        setState(() {
-          _currentIndex = 0;
-        });
-
-        // If a tournament was created, refresh the list
-        if (result == true) {
-          setState(() {
-            _tournaments.clear();
-            _page = 1;
-            _hasMore = true;
-            _isLoading = false;
-          });
-          _fetchTournaments();
-        }
+         // If a tournament was created, refresh the list
+         if (result == true) {
+           _refreshList();
+         }
       });
     } else if (index == 2) {
       // Navigate to ProfileScreen
@@ -253,9 +250,9 @@ class _TournamentListScreenState extends State<TournamentListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5), // Light grey background
-      appBar: const Navbar(), // Use Navbar
+    return BaseScreen(
+      initialIndex: 0,
+      onTap: _onItemTapped,
       body: SingleChildScrollView(
         controller: _scrollController,
         child: Column(
@@ -417,6 +414,7 @@ class _TournamentListScreenState extends State<TournamentListScreen> {
                   }
                   return TournamentCard(
                     tournament: _filteredTournaments[index],
+                    onUpdate: _refreshList,
                   );
                 },
               ),
@@ -434,10 +432,6 @@ class _TournamentListScreenState extends State<TournamentListScreen> {
             const SizedBox(height: 80), // Bottom padding for FAB
           ],
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: _onItemTapped,
       ),
     );
   }

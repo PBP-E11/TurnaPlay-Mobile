@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/settings.dart';
 import 'dart:convert';
 
+import 'package:turnaplay_mobile/widgets/footer.dart';
+import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
+
 class EditUserScreen extends StatefulWidget {
   final String userId;
   final Map<String, dynamic> userData;
@@ -27,6 +30,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
   String? _selectedRole;
   bool _isActive = true;
   bool _isLoading = false;
+  final int _currentIndex = 2;
 
   @override
   void initState() {
@@ -40,6 +44,19 @@ class _EditUserScreenState extends State<EditUserScreen> {
     _displayNameController.text = widget.userData['display_name'] ?? '';
     _selectedRole = widget.userData['role'] ?? 'user';
     _isActive = widget.userData['is_active'] ?? true;
+  }
+
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TournamentForm()),
+      );
+    } else if (index == 2) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    }
   }
 
   @override
@@ -103,6 +120,10 @@ class _EditUserScreenState extends State<EditUserScreen> {
         title: const Text('Edit User'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
+      ),
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),

@@ -47,7 +47,7 @@ class _EditTeamNameFormState extends State<EditTeamNameForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Team')),
+      appBar: AppBar(title: const Text('Edit Team Name')),
       body: Padding(
         padding: EdgeInsetsGeometry.all(16),
         child: Form(
