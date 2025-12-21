@@ -208,6 +208,7 @@ class _LoginPageState extends State<LoginPage> {
                         bool isAdmin = response['is_admin'] ?? false;
                         String email = response['email'] ?? '';
                         String displayName = response['display_name'] ?? '';
+                        String id = response['id']?.toString() ?? '';
 
                         if (context.mounted) {
                           await Provider.of<UserProvider>(
@@ -219,6 +220,7 @@ class _LoginPageState extends State<LoginPage> {
                             isAdmin,
                             email: email,
                             displayName: displayName,
+                            id: id,
                           );
 
                           if (context.mounted) {

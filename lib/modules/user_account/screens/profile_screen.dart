@@ -77,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // Navigate to Create Tournament
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const TournamentCreationForm()),
+        MaterialPageRoute(builder: (context) => const TournamentForm()),
       ).then((_) {
         // Reset index to profile when coming back - Handled by BaseScreen re-render or no-op
       });

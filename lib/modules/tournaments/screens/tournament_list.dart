@@ -190,6 +190,16 @@ class _TournamentListScreenState extends State<TournamentListScreen> {
     }
   }
 
+  void _refreshList() {
+    setState(() {
+      _tournaments.clear();
+      _page = 1;
+      _hasMore = true;
+      _isLoading = false;
+    });
+    _fetchTournaments();
+  }
+
   void _onItemTapped(int index) {
     if (index == 0) {
       // Already on Home
@@ -198,18 +208,12 @@ class _TournamentListScreenState extends State<TournamentListScreen> {
        Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const TournamentCreationForm(),
+          builder: (context) => const TournamentForm(),
         ),
       ).then((result) {
          // If a tournament was created, refresh the list
          if (result == true) {
-           setState(() {
-             _tournaments.clear();
-             _page = 1;
-             _hasMore = true;
-             _isLoading = false;
-           });
-           _fetchTournaments();
+           _refreshList();
          }
       });
     } else if (index == 2) {
@@ -412,6 +416,7 @@ class _TournamentListScreenState extends State<TournamentListScreen> {
                   }
                   return TournamentCard(
                     tournament: _filteredTournaments[index],
+                    onUpdate: _refreshList,
                   );
                 },
               ),

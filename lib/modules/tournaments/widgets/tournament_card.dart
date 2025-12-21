@@ -5,8 +5,9 @@ import 'package:turnaplay_mobile/modules/tournaments/screens/tournament_details.
 
 class TournamentCard extends StatelessWidget {
   final Tournament tournament;
+  final VoidCallback? onUpdate;
 
-  const TournamentCard({super.key, required this.tournament});
+  const TournamentCard({super.key, required this.tournament, this.onUpdate});
 
   String _formatDate(DateTime date) {
     const List<String> months = [
@@ -97,7 +98,11 @@ class TournamentCard extends StatelessWidget {
                               builder: (context) =>
                                   TournamentDetails(tournament: tournament),
                             ),
-                          );
+                          ).then((result) {
+                            if (result == true) {
+                              onUpdate?.call();
+                            }
+                          });
                         },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: const Color(0xFF494598),

@@ -25,7 +25,7 @@ class _GameAccountListScreenState extends State<GameAccountListScreen> {
       Navigator.of(context, rootNavigator: true).pushReplacementNamed('/home');
     } else if (index == 1) {
       Navigator.of(context, rootNavigator: true).push(
-        MaterialPageRoute(builder: (context) => const TournamentCreationForm()),
+        MaterialPageRoute(builder: (context) => const TournamentForm()),
       );
     } else if (index == 2) {
       Navigator.of(context, rootNavigator: true).pushReplacementNamed('/profile');

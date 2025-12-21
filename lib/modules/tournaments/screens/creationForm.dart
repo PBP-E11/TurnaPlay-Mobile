@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentFormatEntry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/GameEntry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/screens/tournament_list.dart';
 
-class TournamentCreationForm extends StatefulWidget {
-  const TournamentCreationForm({super.key});
+class TournamentForm extends StatefulWidget {
+  final Tournament? tournament;
+
+  const TournamentForm({super.key, this.tournament});
 
   @override
-  State<TournamentCreationForm> createState() => _TournamentCreationFormState();
+  State<TournamentForm> createState() => _TournamentFormState();
 }
 
-class _TournamentCreationFormState extends State<TournamentCreationForm> {
+class _TournamentFormState extends State<TournamentForm> {
   final _formKey = GlobalKey<FormState>();
 
   String _tournamentName = "";
@@ -50,6 +53,8 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
         'http://localhost:8000/api/tournaments/formats/',
       );
 
+      if (!mounted) return;
+
       setState(() {
         if (gamesResponse != null) {
           if (gamesResponse is List) {
@@ -71,6 +76,35 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
           }
         }
 
+        // Initialize for Edit Mode
+        if (widget.tournament != null) {
+          final t = widget.tournament!;
+          _tournamentName = t.tournamentName;
+          _description = t.description;
+          _tournamentDate = t.tournamentDate;
+          _prizePool = t.prizePool;
+          _banner = t.banner ?? "";
+          _teamMaximumCount = t.teamMaximumCount;
+          
+          // Set Game and Format
+          // We need gameId. If not in tournament object directly, we might need to find it via format
+          if (t.gameId != null) {
+             _selectedGameId = t.gameId;
+             _filterFormats(_selectedGameId!, updateState: false);
+             _selectedFormatId = t.tournamentFormatId;
+          } else {
+             // Try to find format to get gameId if needed
+             try {
+                final format = _formats.firstWhere((f) => f.id == t.tournamentFormatId);
+                _selectedGameId = format.gameId;
+                 _filterFormats(_selectedGameId!, updateState: false);
+                _selectedFormatId = t.tournamentFormatId;
+             } catch (e) {
+                // Format not found
+             }
+          }
+        }
+
         _isLoading = false;
       });
     } catch (e) {
@@ -81,14 +115,20 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
     }
   }
 
-  void _filterFormats(String gameId) {
-    setState(() {
-      _selectedGameId = gameId;
-      _selectedFormatId = null; // Reset selected format
-      _filteredFormats = _formats
+  void _filterFormats(String gameId, {bool updateState = true}) {
+    final filtered = _formats
           .where((format) => format.gameId == gameId)
           .toList();
-    });
+    
+    if (updateState) {
+        setState(() {
+        _selectedGameId = gameId;
+        _selectedFormatId = null; // Reset selected format
+        _filteredFormats = filtered;
+        });
+    } else {
+        _filteredFormats = filtered;
+    }
   }
 
   InputDecoration _buildInputDecoration(
@@ -146,6 +186,7 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final isEdit = widget.tournament != null;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
@@ -156,9 +197,9 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Create Tournament',
-          style: TextStyle(
+        title: Text(
+          isEdit ? 'Edit Tournament' : 'Create Tournament',
+          style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
             fontSize: 20,
@@ -230,14 +271,13 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                     // 3. Tournament Name
                     _buildLabel('Tournament Name'),
                     TextFormField(
+                      initialValue: _tournamentName,
                       style: const TextStyle(color: Colors.black),
                       decoration: _buildInputDecoration(
                         'e.g. Winter Championship 2025',
                       ),
                       onChanged: (String? value) {
-                        setState(() {
-                          _tournamentName = value!;
-                        });
+                         _tournamentName = value!;
                       },
                       validator: (String? value) {
                         if (value == null || value.isEmpty) {
@@ -251,15 +291,14 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                     // 4. Description
                     _buildLabel('Description'),
                     TextFormField(
+                      initialValue: _description,
                       style: const TextStyle(color: Colors.black),
                       decoration: _buildInputDecoration(
                         'Brief details about the event...',
                       ),
                       maxLines: 4,
                       onChanged: (String? value) {
-                        setState(() {
-                          _description = value!;
-                        });
+                         _description = value!;
                       },
                       validator: (String? value) {
                         if (value == null || value.isEmpty) {
@@ -300,7 +339,7 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                             onPressed: () async {
                               final DateTime? picked = await showDatePicker(
                                 context: context,
-                                initialDate: DateTime.now(),
+                                initialDate: _tournamentDate ?? DateTime.now(),
                                 firstDate: DateTime.now(),
                                 lastDate: DateTime(2101),
                                 builder: (context, child) {
@@ -337,6 +376,7 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                     // 6. Prize Pool
                     _buildLabel('Prize Pool'),
                     TextFormField(
+                      initialValue: _prizePool == 0 ? null : _prizePool.toString(),
                       style: const TextStyle(color: Colors.black),
                       decoration: _buildInputDecoration(
                         '0',
@@ -357,9 +397,7 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                       ),
                       keyboardType: TextInputType.number,
                       onChanged: (String? value) {
-                        setState(() {
                           _prizePool = int.tryParse(value!) ?? 0;
-                        });
                       },
                       validator: (String? value) {
                         if (value == null || value.isEmpty) {
@@ -376,6 +414,7 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                     // 7. Banner URL
                     _buildLabel('Banner URL'),
                     TextFormField(
+                      initialValue: _banner,
                       style: const TextStyle(color: Colors.black),
                       decoration: _buildInputDecoration(
                         'example.com/image.png',
@@ -392,9 +431,7 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                         ),
                       ),
                       onChanged: (String? value) {
-                        setState(() {
                           _banner = value!;
-                        });
                       },
                     ),
                     const SizedBox(height: 16),
@@ -402,13 +439,12 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                     // 8. Max Team Count
                     _buildLabel('Max Team Count'),
                     TextFormField(
+                      initialValue: _teamMaximumCount.toString(),
                       style: const TextStyle(color: Colors.black),
                       decoration: _buildInputDecoration('e.g. 16'),
                       keyboardType: TextInputType.number,
                       onChanged: (String? value) {
-                        setState(() {
                           _teamMaximumCount = int.tryParse(value!) ?? 1;
-                        });
                       },
                       validator: (String? value) {
                         if (value == null || value.isEmpty) {
@@ -422,7 +458,7 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                     ),
                     const SizedBox(height: 32),
 
-                    // Create Button
+                    // Create/Edit Button
                     SizedBox(
                       width: double.infinity,
                       height: 55,
@@ -438,8 +474,12 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                               return;
                             }
 
+                            final url = isEdit
+                                ? "http://localhost:8000/api/tournaments/edit-tournament/${widget.tournament!.id}/"
+                                : "http://localhost:8000/api/tournaments/create-tournament/";
+                            
                             final response = await request.post(
-                              "http://localhost:8000/api/tournaments/create-tournament/",
+                              url,
                               {
                                 'tournament_name': _tournamentName,
                                 'description': _description,
@@ -456,9 +496,9 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                             if (context.mounted) {
                               if (response['status'] == 'success') {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
+                                   SnackBar(
                                     content: Text(
-                                      "Tournament created successfully!",
+                                      isEdit ? "Tournament updated successfully!" : "Tournament created successfully!",
                                     ),
                                   ),
                                 );
@@ -468,7 +508,7 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                                   SnackBar(
                                     content: Text(
                                       response['message'] ??
-                                          "Failed to create tournament",
+                                          (isEdit ? "Failed to update tournament" : "Failed to create tournament"),
                                     ),
                                   ),
                                 );
@@ -484,9 +524,9 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                           ),
                           elevation: 2,
                         ),
-                        child: const Text(
-                          'Create Tournament',
-                          style: TextStyle(
+                        child: Text(
+                          isEdit ? 'Save Changes' : 'Create Tournament',
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
