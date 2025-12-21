@@ -10,8 +10,7 @@ import 'create_team_form.dart';
 import '../models/team_entry.dart';
 import '../models/team_member_entry.dart';
 import '../util.dart';
-import 'package:turnaplay_mobile/settings.dart';
-import '../widgets/whatever.dart';
+import '../widgets/components.dart';
 
 class ViewTeam extends StatefulWidget {
   final Tournament tournament; // passed from previous page

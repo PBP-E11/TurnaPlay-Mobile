@@ -3,7 +3,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/modules/game_account/models/GameAccountAPI.dart';
 import 'package:turnaplay_mobile/modules/game_account/models/GameAccountEntry.dart';
-import 'package:turnaplay_mobile/modules/tournament_registration/widgets/whatever.dart';
+import 'package:turnaplay_mobile/modules/tournament_registration/widgets/components.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
 import '../screens/view_team.dart';
 import '../util.dart';
