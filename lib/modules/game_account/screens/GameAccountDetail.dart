@@ -50,6 +50,48 @@ class _GameAccountDetailScreenState extends State<GameAccountDetailScreen> {
     }
   }
 
+  InputDecoration _buildInputDecoration(String hintText) {
+    return InputDecoration(
+      hintText: hintText,
+      hintStyle: const TextStyle(color: Colors.grey),
+      filled: true,
+      fillColor: Colors.white,
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: primaryColor, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Colors.red),
+      ),
+    );
+  }
+
+  Widget _buildLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8, top: 4),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<GameAccountController>();
@@ -63,15 +105,19 @@ class _GameAccountDetailScreenState extends State<GameAccountDetailScreen> {
              // Custom Header
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              child: Row(
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.black),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
                   ),
-                  const SizedBox(width: 8),
+                  
                   const Text(
                     'Account Detail',
                     style: TextStyle(
@@ -80,13 +126,16 @@ class _GameAccountDetailScreenState extends State<GameAccountDetailScreen> {
                       color: Colors.black,
                     ),
                   ),
-                  const Spacer(),
+                  
                   if (!_editing)
-                    IconButton(
+                    Align(
+                    alignment: Alignment.centerRight,
+                     child:IconButton(
                       icon: const Icon(Icons.edit, color: primaryColor),
                       onPressed: () {
                         setState(() => _editing = true);
                       },
+                    ),
                     ),
                 ],
               ),
@@ -119,7 +168,7 @@ class _GameAccountDetailScreenState extends State<GameAccountDetailScreen> {
     );
   }
 
-  // ---------------- VIEW MODE ----------------
+  // VIEW MODE 
 
   Widget _viewSection() {
     return Column(
@@ -148,69 +197,103 @@ class _GameAccountDetailScreenState extends State<GameAccountDetailScreen> {
     );
   }
 
-  // ---------------- EDIT MODE ----------------
-
+  // EDIT MODE 
   Widget _editSection(GameAccountController controller) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Game
+        _buildLabel('Game'),
         DropdownButtonFormField<String>(
           value: _selectedGameId,
+          decoration: _buildInputDecoration('Select a game'),
+          icon: const Icon(Icons.keyboard_arrow_down),
           items: controller.games
-              .map((g) => DropdownMenuItem(value: g.id, child: Text(g.name)))
+              .map(
+                (g) => DropdownMenuItem(
+                  value: g.id,
+                  child: Text(g.name),
+                ),
+              )
               .toList(),
           onChanged: (v) => setState(() => _selectedGameId = v),
-          decoration: const InputDecoration(labelText: 'Game'),
         ),
         const SizedBox(height: 16),
+
+        // In-game name
+        _buildLabel('In-game Name'),
         TextFormField(
           controller: _ingameNameController,
-          decoration: const InputDecoration(labelText: 'In-game name'),
+          style: const TextStyle(color: Colors.black),
+          decoration:
+              _buildInputDecoration('Your in-game username'),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 32),
+
+        // Actions
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            TextButton(
-              onPressed: () {
-                setState(() => _editing = false);
-              },
-              child: const Text('Cancel'),
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () {
+                  setState(() => _editing = false);
+                },
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: primaryColor,
+                  side: BorderSide(color: primaryColor),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                child: const Text('Cancel'),
+              ),
             ),
             const SizedBox(width: 12),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  elevation: 2,
+                ),
+                onPressed: () async {
+                  final newName = _ingameNameController.text.trim();
+                  final newGameId = _selectedGameId;
+
+                  if (newName == _originalIngameName &&
+                      newGameId == _originalGameId) {
+                    setState(() => _editing = false);
+                    return;
+                  }
+
+                  final updated = await controller.updateAccount(
+                    id: _account.id,
+                    gameId: newGameId ?? _originalGameId!,
+                    ingameName:
+                        newName.isEmpty ? _originalIngameName : newName,
+                  );
+
+                  setState(() {
+                    _account = updated;
+                    _originalIngameName = updated.ingameName;
+                    _originalGameId = updated.game;
+                    _editing = false;
+                  });
+                },
+                child: const Text(
+                  'Save Changes',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              onPressed: () async {
-                final newName = _ingameNameController.text.trim();
-                final newGameId = _selectedGameId;
-
-                // If nothing changed, just exit edit mode
-                if (newName == _originalIngameName &&
-                    newGameId == _originalGameId) {
-                  setState(() => _editing = false);
-                  return;
-                }
-
-                final updated = await controller.updateAccount(
-                  id: _account.id,
-                  gameId: newGameId ?? _originalGameId!,
-                  ingameName: newName.isEmpty ? _originalIngameName : newName,
-                );
-
-                setState(() {
-                  _account = updated;
-                  _originalIngameName = updated.ingameName;
-                  _originalGameId = updated.game;
-                  _editing = false;
-                });
-              },
-              child: const Text('Save'),
             ),
           ],
         ),
