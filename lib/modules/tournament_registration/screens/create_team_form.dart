@@ -3,9 +3,11 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/modules/game_account/models/GameAccountAPI.dart';
 import 'package:turnaplay_mobile/modules/game_account/models/GameAccountEntry.dart';
+import 'package:turnaplay_mobile/modules/tournament_registration/widgets/whatever.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
 import '../screens/view_team.dart';
 import '../util.dart';
+import '../widgets/whatever.dart';
 
 class CreateTeamForm extends StatefulWidget {
   final Tournament tournament; // passed from previous page
@@ -20,7 +22,6 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
   final TextEditingController _teamNameController = TextEditingController();
   List<GameAccountEntry>? _gameAccounts;
   String? _selectedGameAccountId;
-  bool _isSubmitting = false;
   bool _isLoading = true;
 
   Future<void> _loadState() async {
@@ -65,7 +66,7 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
       'team_name': _teamNameController.text,
     };
 
-    setState(() => _isSubmitting = true);
+    setState(() => _isLoading = true);
     final responseBody = await sendPost(
       context.read(),
       'api/team/create/',
@@ -83,7 +84,7 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
         );
       }
     }
-    setState(() => _isSubmitting = false);
+    setState(() => _isLoading = false);
   }
 
   @override
@@ -95,13 +96,7 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Center(
-        child: SizedBox(
-          width: 100,
-          height: 100,
-          child: const CircularProgressIndicator(),
-        ),
-      );
+      return Center(child: CircularProgressIndicator(color: primaryColor));
     }
     return Scaffold(
       appBar: AppBar(title: const Text('Create Team')),
@@ -113,7 +108,7 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
             children: [
               // Leader dropdown
               DropdownButtonFormField<String>(
-                hint: const Text('Select Game Account'),
+                decoration: buildInputDecoration('Select Game Account'),
                 items: _gameAccounts!
                     .map(
                       (gameAccount) => DropdownMenuItem<String>(
@@ -125,24 +120,22 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
                 onChanged: (val) =>
                     setState(() => _selectedGameAccountId = val),
                 validator: (val) =>
-                    val == null ? 'Please select a leader' : null,
+                    val == null ? 'Please select a game account' : null,
               ),
               const SizedBox(height: 16),
               // Team name
               TextFormField(
                 controller: _teamNameController,
-                decoration: const InputDecoration(labelText: 'Team Name'),
+                decoration: buildInputDecoration('Team Name'),
                 validator: (val) => val == null || val.isEmpty
                     ? 'Please enter a team name'
                     : null,
               ),
               const SizedBox(height: 24),
               // Submit button
-              ElevatedButton(
-                onPressed: _isSubmitting ? null : _submitForm,
-                child: _isSubmitting
-                    ? const CircularProgressIndicator()
-                    : const Text('Create Team'),
+              buildElevatedButtonText(
+                onPressed: _submitForm,
+                text: 'Create Team',
               ),
             ],
           ),
