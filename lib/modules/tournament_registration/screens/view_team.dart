@@ -41,6 +41,23 @@ class _ViewTeamState extends State<ViewTeam> {
     }
   }
 
+  Future<void> _leaveTeam() async {
+    final payload = {'team_id': _team!.teamId};
+    final uri = _team!.isUserLeader
+        ? 'api/team/delete/'
+        : 'api/team/member/delete/';
+
+    final responseBody = await sendPost(
+      context.read<CookieRequest>(),
+      uri,
+      payload,
+    );
+
+    if (responseBody != null && mounted) {
+      Navigator.pop(context);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -63,25 +80,100 @@ class _ViewTeamState extends State<ViewTeam> {
       body: Padding(
         padding: EdgeInsetsGeometry.all(16),
         child: Column(
-          children: ([Text(_team!.teamName) as Widget])
-            ..addAll(buildMembers(context, _team!)),
+          children: ([Text(_team!.teamName), _buildEditTeamButton(context)])
+            ..addAll(_buildMembers(context))
+            ..addAll([
+              _buildChangeGameAccountButton(context),
+              _buildAddMemberButton(context),
+              _buildLeaveTeamButton(context),
+            ]),
         ),
       ),
     );
   }
-}
 
-List<Widget> buildMembers(BuildContext context, Team team) {
-  List<Widget> widgets = [];
-  for (TeamMember member in team.members) {
-    widgets.add(
-      Row(
-        children: [
-          Text(member.gameAccountName!),
-          Text(member.userAccountName!),
-        ],
-      ),
+  List<Widget> _buildMembers(BuildContext _) {
+    List<Widget> widgets = [];
+    for (TeamMember member in _team!.members) {
+      widgets.add(
+        Row(
+          children: [
+            Text(member.gameAccountName!),
+            Text(member.userAccountName!),
+          ],
+        ),
+      );
+    }
+    return widgets;
+  }
+
+  Widget _buildEditTeamButton(BuildContext context) {
+    if (!_team!.isUserLeader) {
+      return Container();
+    }
+
+    return ElevatedButton(
+      onPressed: () {
+        // TODO: proper redirect
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreateTeamForm(tournament: widget.tournament),
+          ),
+        );
+      },
+      child: const Text('Edit Team Name'),
     );
   }
-  return widgets;
+
+  Widget _buildChangeGameAccountButton(BuildContext context) {
+    if (!_team!.isUserInTeam) {
+      return Container();
+    }
+
+    return ElevatedButton(
+      onPressed: () {
+        // TODO: proper redirect
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreateTeamForm(tournament: widget.tournament),
+          ),
+        );
+      },
+      child: const Text('Change Game Account'),
+    );
+  }
+
+  Widget _buildLeaveTeamButton(BuildContext context) {
+    if (!_team!.isUserInTeam) {
+      return Container();
+    }
+
+    return ElevatedButton(
+      onPressed: () {
+        _leaveTeam();
+      },
+      child: const Text('Leave Team'),
+    );
+  }
+
+  Widget _buildAddMemberButton(BuildContext context) {
+    if (!_team!.isUserLeader) {
+      return Container();
+    }
+
+    return ElevatedButton(
+      onPressed: () {
+        // TODO: proper redirect
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreateTeamForm(tournament: widget.tournament),
+          ),
+        );
+      },
+      child: const Text('Add Member'),
+    );
+  }
 }
