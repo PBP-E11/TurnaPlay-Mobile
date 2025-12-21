@@ -3,6 +3,7 @@ import 'package:turnaplay_mobile/register.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'modules/user_account/screens/manage_users.dart';
 
 void main() {
   runApp(const LoginApp());
@@ -17,9 +18,7 @@ class LoginApp extends StatelessWidget {
       title: 'Login',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF494598),
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF494598)),
       ),
       home: const LoginPage(),
     );
@@ -54,10 +53,8 @@ class _LoginPageState extends State<LoginPage> {
                 ClipPath(
                   clipper: HeaderWaveClipper(),
                   child: Container(
-                    height: 240, 
-                    decoration: BoxDecoration(
-                      color: primaryColor,
-                    ),
+                    height: 240,
+                    decoration: BoxDecoration(color: primaryColor),
                     child: Stack(
                       children: [
                         Positioned.fill(
@@ -100,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ],
             ),
-            
+
             // 2. Form Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -120,10 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 8.0),
                   Text(
                     "Please sign in to continue",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                   const SizedBox(height: 30.0),
 
@@ -131,19 +125,24 @@ class _LoginPageState extends State<LoginPage> {
                   TextFormField(
                     controller: _usernameController,
                     decoration: InputDecoration(
-                      labelText: 'Username or Email Address', 
+                      labelText: 'Username or Email Address',
                       labelStyle: TextStyle(
-                        color: Colors.grey[600], 
-                        fontWeight: FontWeight.w500
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
                       ),
-                      prefixIcon: Icon(Icons.email_outlined, color: primaryColor),
+                      prefixIcon: Icon(
+                        Icons.email_outlined,
+                        color: primaryColor,
+                      ),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey[300]!),
                       ),
                       focusedBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: primaryColor),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -161,17 +160,22 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       labelText: 'Password',
                       labelStyle: TextStyle(
-                        color: Colors.grey[600], 
-                        fontWeight: FontWeight.w500
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
                       ),
-                      prefixIcon: Icon(Icons.vpn_key_outlined, color: primaryColor),
+                      prefixIcon: Icon(
+                        Icons.vpn_key_outlined,
+                        color: primaryColor,
+                      ),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey[300]!),
                       ),
                       focusedBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: primaryColor),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -180,9 +184,10 @@ class _LoginPageState extends State<LoginPage> {
                       return null;
                     },
                   ),
-                  
-                  const SizedBox(height: 16.0), // Space between Password and Forget Password?
 
+                  const SizedBox(
+                    height: 16.0,
+                  ), // Space between Password and Forget Password?
                   // Forget Password - NEW POSITION
                   Align(
                     alignment: Alignment.centerRight,
@@ -200,8 +205,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
 
-                  const SizedBox(height: 24.0), // Space between Forget Password? and Login Button
-
+                  const SizedBox(
+                    height: 24.0,
+                  ), // Space between Forget Password? and Login Button
                   // Login Button
                   ElevatedButton(
                     onPressed: () async {
@@ -219,12 +225,22 @@ class _LoginPageState extends State<LoginPage> {
                         String message = response['message'];
                         String uname = response['username'];
                         if (context.mounted) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MyHomePage(),
-                            ),
-                          );
+                          // Test Sementara
+                          if (response['role'] == 'admin') {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ManageUsersScreen(),
+                              ),
+                            );
+                          } else {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(),
+                              ),
+                            );
+                          }
                           ScaffoldMessenger.of(context)
                             ..hideCurrentSnackBar()
                             ..showSnackBar(
@@ -273,8 +289,6 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  
-
 
                   const SizedBox(height: 40.0),
 
@@ -323,15 +337,23 @@ class HeaderWaveClipper extends CustomClipper<Path> {
     var path = Path();
     // Start at top-left
     path.lineTo(0, size.height * 0.75);
-    
-    var controlPoint = Offset(size.width * 0.5, size.height); // Bottom center pull
+
+    var controlPoint = Offset(
+      size.width * 0.5,
+      size.height,
+    ); // Bottom center pull
     var endPoint = Offset(size.width, size.height * 0.75);
-    
-    path.quadraticBezierTo(controlPoint.dx, controlPoint.dy, endPoint.dx, endPoint.dy);
-    
+
+    path.quadraticBezierTo(
+      controlPoint.dx,
+      controlPoint.dy,
+      endPoint.dx,
+      endPoint.dy,
+    );
+
     path.lineTo(size.width, 0);
     path.close();
-    
+
     return path;
   }
 
