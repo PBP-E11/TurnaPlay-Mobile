@@ -5,6 +5,7 @@ import '../models/UserAccountEntry.dart';
 import 'create_organizer.dart';
 import 'user_detail.dart';
 import 'manage_tournaments.dart';
+import 'dart:convert';
 
 class ManageUsersScreen extends StatefulWidget {
   const ManageUsersScreen({super.key});
@@ -104,7 +105,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     try {
       final response = await request.post(
         'http://localhost:8000/api/accounts/dashboard/users/delete/',
-        {'user_id': userId}.toString(),
+        jsonEncode({'user_id': userId}),
       );
 
       if (response['status'] == true) {

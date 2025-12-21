@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -82,9 +84,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
     final request = context.read<CookieRequest>();
     try {
-      final response = await request.postJson(
-        'http://localhost:8000/api/accounts/dashboard/users/${widget.userId}/delete/',
-        '{}',
+      final response = await request.post(
+        'http://localhost:8000/api/accounts/dashboard/users/delete/',
+        jsonEncode({'user_id': _user?['id']}),
       );
 
       if (response['status'] == true) {
