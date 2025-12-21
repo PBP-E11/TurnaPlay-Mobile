@@ -10,6 +10,9 @@
 ## Download
 Download aplikasi versi terbaru: [Download APK](https://app.bitrise.io/app/226353bf-9ef4-4b88-9e6a-5b49841f802e/installable-artifacts/4f630cbbd267f62f/public-install-page/d66c6d5a9785bb9643c9fd6373fb8a5d)
 
+## Promotion/Overview Video
+Lihat video aplikasi kita di tautan berikut : [Video](https://drive.google.com/file/d/1Ga7Cy50KVqZTsL8JbaPosBf8Xy9vtfUp/view?usp=sharing)
+
 ## Deskripsi Aplikasi
 
 TurnaPlay adalah sebuah aplikasi yang berfungsi sebagai pusat informasi turnamen esport di Indonesia. Platform ini hadir untuk menjawab masalah yang sering dialami para gamers, yaitu sulitnya menemukan informasi lomba karena tersebar di berbagai akun media sosial seperti instagram. Melalui TurnaPlay, semua informasi turnamen dikumpulkan, disaring, dan diverifikasi agar pengguna bisa mendapatkan data yang akurat dan terstruktur dalam satu tempat. 
