@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
+import 'package:turnaplay_mobile/modules/tournament_registration/screens/create_team_form.dart';
+import 'package:turnaplay_mobile/modules/tournaments/screens/tournament_details.dart';
 
 class TournamentCard extends StatelessWidget {
   final Tournament tournament;
@@ -89,7 +91,13 @@ class TournamentCard extends StatelessWidget {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {
-                          // TODO: Navigate to detail
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  TournamentDetails(tournament: tournament),
+                            ),
+                          );
                         },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: const Color(0xFF494598),
@@ -108,7 +116,13 @@ class TournamentCard extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          // TODO: Handle registration
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  CreateTeamForm(tournament: tournament),
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF494598), // Purple
