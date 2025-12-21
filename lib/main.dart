@@ -9,6 +9,10 @@ import 'package:turnaplay_mobile/modules/user_account/screens/profile_screen.dar
 import 'modules/game_account/models/GameAccountAPI.dart';
 import 'modules/game_account/models/GameAccountController.dart';
 
+// invite popup
+import 'package:turnaplay_mobile/modules/tournament_invite/screens/invite_list.dart';
+import 'package:turnaplay_mobile/modules/tournament_invite/widgets/invite_popup.dart';
+
 void main() {
   runApp(
     MultiProvider(
@@ -30,13 +34,39 @@ void main() {
   );
 }
 
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+
+//   // This widget is the root of your application.
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'TurnaPlay',
+//       theme: ThemeData(
+//         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
+//             .copyWith(secondary: Colors.blueAccent[400]),
+//       ),
+//       home: const LoginPage(),
+//       routes: {
+//         '/home': (context) => const TournamentListScreen(),
+//         '/profile': (context) => const ProfileScreen(),
+//         '/login': (context) => const LoginPage(),
+//         '/register': (context) => const RegisterPage(),
+//       },
+//     );
+//   }
+// }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'TurnaPlay',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
@@ -49,10 +79,24 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
       },
+      builder: (context, child) {
+        if (child == null) return const SizedBox.shrink();
+        return InvitePopupPoller(
+          child: child,
+          onOpenInvites: () {
+            final nav = navigatorKey.currentState;
+            if (nav == null) return;
+            nav.push(
+              MaterialPageRoute(
+                builder: (_) => const InviteListScreen(),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
