@@ -8,7 +8,7 @@
 - Tangguh Ambha Wahyuga - 2406361536
 
 ## Download
-Download aplikasi versi terbaru: [Download APK](https://app.bitrise.io/app/226353bf-9ef4-4b88-9e6a-5b49841f802e/installable-artifacts/4f630cbbd267f62f/public-install-page/d66c6d5a9785bb9643c9fd6373fb8a5d)
+Download aplikasi versi terbaru: [Download APK](https://app.bitrise.io/app/226353bf-9ef4-4b88-9e6a-5b49841f802e/installable-artifacts/87445c28791a6eb3/public-install-page/f071cb4f364640f563f2f7ecee29db81)
 
 ## Promotion/Overview Video
 Lihat video aplikasi kita di tautan berikut : [Video](https://drive.google.com/file/d/1Ga7Cy50KVqZTsL8JbaPosBf8Xy9vtfUp/view?usp=sharing)
