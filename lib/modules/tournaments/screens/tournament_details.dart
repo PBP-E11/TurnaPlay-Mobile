@@ -167,6 +167,28 @@ class TournamentDetails extends StatelessWidget {
     );
   }
 
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'ongoing':
+        return Colors.green;
+      case 'selesai':
+        return Colors.red;
+      default:
+        return Colors.black;
+    }
+  }
+
+  Color _getStatusBackgroundColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'ongoing':
+        return Colors.green.withOpacity(0.1);
+      case 'selesai':
+        return Colors.red.withOpacity(0.1);
+      default:
+        return Colors.grey.withOpacity(0.1);
+    }
+  }
+
   Widget _buildHeader(BuildContext _) {
     // Format date: "15 Oct 2024"
     final dateString = _formatDate(tournament.tournamentDate);
@@ -183,6 +205,38 @@ class TournamentDetails extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
+        Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: _getStatusBackgroundColor(tournament.status),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(tournament.status),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  tournament.status,
+                  style: TextStyle(
+                    color: _getStatusColor(tournament.status),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
 
         // Date
         Text(
@@ -260,36 +314,37 @@ class TournamentDetails extends StatelessWidget {
               ],
             ),
           ),
-        Center(
-          child: SizedBox(
-            width: 200,
-            height: 40,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        CreateTeamForm(tournament: tournament),
+        if (tournament.status.toLowerCase() != 'selesai')
+          Center(
+            child: SizedBox(
+              width: 200,
+              height: 40,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CreateTeamForm(tournament: tournament),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF494598), // Purple
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF494598), // Purple
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-              child: const Text(
-                "Register Now",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                child: const Text(
+                  "Register Now",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }
