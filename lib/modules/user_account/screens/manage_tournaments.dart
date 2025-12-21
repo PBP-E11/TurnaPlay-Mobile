@@ -6,6 +6,9 @@ import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/widgets/footer.dart';
 import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
 import 'package:turnaplay_mobile/modules/user_account/screens/tournament_detail.dart';
+import 'tournament_detail.dart';
+import 'manage_users.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 class ManageTournamentsScreen extends StatefulWidget {
   const ManageTournamentsScreen({super.key});
@@ -56,7 +59,7 @@ class _ManageTournamentsScreenState extends State<ManageTournamentsScreen> {
 
     try {
       String url =
-          'http://localhost:8000/api/accounts/dashboard/tournaments/?page=1&page_size=100';
+          '$HOST/api/accounts/dashboard/tournaments/?page=1&page_size=100';
 
       if (_selectedGame != null) url += '&game=$_selectedGame';
       if (_searchController.text.isNotEmpty)
@@ -118,7 +121,7 @@ class _ManageTournamentsScreenState extends State<ManageTournamentsScreen> {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.post(
-        'http://localhost:8000/api/accounts/dashboard/tournaments/delete/',
+        '$HOST/api/accounts/dashboard/tournaments/delete/',
         jsonEncode({'tournament_id': tournamentId}),
       );
 
@@ -570,9 +573,7 @@ class _ManageTournamentsScreenState extends State<ManageTournamentsScreen> {
             onPressed: () async {
               final request = context.read<CookieRequest>();
               try {
-                await request.logout(
-                  'http://localhost:8000/api/accounts/logout/',
-                );
+                await request.logout('$HOST/api/accounts/logout/');
                 if (mounted)
                   Navigator.pushNamedAndRemoveUntil(
                     context,

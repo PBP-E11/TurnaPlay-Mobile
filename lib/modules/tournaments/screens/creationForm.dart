@@ -5,6 +5,7 @@ import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentFormatEntry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/GameEntry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/screens/tournament_list.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 class TournamentForm extends StatefulWidget {
   final Tournament? tournament;
@@ -44,13 +45,11 @@ class _TournamentFormState extends State<TournamentForm> {
     final request = context.read<CookieRequest>();
     try {
       // Fetch Games
-      final gamesResponse = await request.get(
-        'http://localhost:8000/api/tournaments/games/',
-      );
+      final gamesResponse = await request.get('$HOST/api/tournaments/games/');
 
       // Fetch Formats
       final formatsResponse = await request.get(
-        'http://localhost:8000/api/tournaments/formats/',
+        '$HOST/api/tournaments/formats/',
       );
 
       if (!mounted) return;
@@ -479,7 +478,7 @@ class _TournamentFormState extends State<TournamentForm> {
                                 : "http://localhost:8000/api/tournaments/create-tournament/";
                             
                             final response = await request.post(
-                              url,
+                              "$HOST/api/tournaments/create-tournament/",
                               {
                                 'tournament_name': _tournamentName,
                                 'description': _description,

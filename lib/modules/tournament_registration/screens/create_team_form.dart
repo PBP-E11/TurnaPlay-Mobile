@@ -43,15 +43,9 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
       }
     }
 
-    String gameId;
-    {
-      // TODO: replace with actual logic
-      gameId = 'c5cfa0ab-b68b-4890-87e8-96f38c62b931';
-    }
-
     if (mounted) {
       _gameAccounts = await context.read<GameAccountApi>().fetchAccounts(
-        gameId: gameId,
+        gameId: widget.tournament.gameId,
       );
 
       setState(() {
@@ -78,7 +72,16 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
       payload,
     );
     if (responseBody != null) {
-      debugPrint(responseBody["data"]);
+      debugPrint('Submitted form and got: $responseBody');
+
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ViewTeam(tournament: widget.tournament),
+          ),
+        );
+      }
     }
     setState(() => _isSubmitting = false);
   }

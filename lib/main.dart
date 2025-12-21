@@ -92,9 +92,7 @@ class MyApp extends StatelessWidget {
             final nav = navigatorKey.currentState;
             if (nav == null) return;
             nav.push(
-              MaterialPageRoute(
-                builder: (_) => const InviteListScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const InviteListScreen()),
             );
           },
         );

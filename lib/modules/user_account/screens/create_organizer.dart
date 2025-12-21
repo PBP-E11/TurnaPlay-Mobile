@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/settings.dart';
 import 'dart:convert';
 
 import 'package:turnaplay_mobile/widgets/footer.dart';
@@ -58,7 +59,7 @@ class _CreateOrganizerScreenState extends State<CreateOrganizerScreen> {
 
     try {
       final response = await request.postJson(
-        'http://localhost:8000/api/accounts/dashboard/users/create-organizer/',
+        '$HOST/api/accounts/dashboard/users/create-organizer/',
         jsonEncode({
           'username': _usernameController.text,
           'email': _emailController.text,

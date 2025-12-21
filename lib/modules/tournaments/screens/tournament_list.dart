@@ -7,6 +7,9 @@ import 'package:turnaplay_mobile/modules/tournaments/models/TournamentFormatEntr
 import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
 import 'package:turnaplay_mobile/modules/tournaments/widgets/tournament_card.dart';
 import 'package:turnaplay_mobile/widgets/base_screen.dart';
+import 'package:turnaplay_mobile/widgets/navbar.dart'; // Import CustomAppBar
+import 'package:turnaplay_mobile/widgets/footer.dart'; // Import footer.dart
+import 'package:turnaplay_mobile/settings.dart';
 
 class TournamentListScreen extends StatefulWidget {
   const TournamentListScreen({super.key});
@@ -47,9 +50,7 @@ class _TournamentListScreenState extends State<TournamentListScreen> {
 
     try {
       // Fetch Games
-      final gamesResponse = await request.get(
-        'http://localhost:8000/api/tournaments/games/',
-      );
+      final gamesResponse = await request.get('$HOST/api/tournaments/games/');
       debugPrint("Games Response: $gamesResponse");
       debugPrint("Games Response Type: ${gamesResponse.runtimeType}");
 
@@ -75,7 +76,7 @@ class _TournamentListScreenState extends State<TournamentListScreen> {
 
       // Fetch Formats
       final formatsResponse = await request.get(
-        'http://localhost:8000/api/tournaments/formats/',
+        '$HOST/api/tournaments/formats/',
       );
       debugPrint("Formats Response: $formatsResponse");
       debugPrint("Formats Response Type: ${formatsResponse.runtimeType}");
@@ -136,7 +137,7 @@ class _TournamentListScreenState extends State<TournamentListScreen> {
     try {
       // Using pbp_django_auth's request.get which returns dynamic (decoded JSON)
       final response = await request.get(
-        'http://localhost:8000/api/tournaments/list/?page=$_page',
+        '$HOST/api/tournaments/list/?page=$_page',
       );
 
       // Debug print to check response structure
@@ -204,8 +205,8 @@ class _TournamentListScreenState extends State<TournamentListScreen> {
     if (index == 0) {
       // Already on Home
     } else if (index == 1) {
-       // Navigate to Create Tournament
-       Navigator.push(
+      // Navigate to Create Tournament
+      Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => const TournamentForm(),
@@ -218,10 +219,7 @@ class _TournamentListScreenState extends State<TournamentListScreen> {
       });
     } else if (index == 2) {
       // Navigate to ProfileScreen
-      Navigator.pushReplacementNamed(
-        context,
-        '/profile',
-      );
+      Navigator.pushReplacementNamed(context, '/profile');
     }
   }
 

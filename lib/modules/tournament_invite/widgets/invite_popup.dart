@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 class InvitePopupPoller extends StatefulWidget {
   final Widget child;
@@ -15,7 +16,7 @@ class InvitePopupPoller extends StatefulWidget {
     super.key,
     required this.child,
     required this.onOpenInvites,
-    this.baseUrl = "http://127.0.0.1:8000",
+    this.baseUrl = "$HOST",
     this.interval = const Duration(seconds: 10),
     this.onAfterDialog,
   });
@@ -75,10 +76,13 @@ class _InvitePopupPollerState extends State<InvitePopupPoller> {
       return;
     }
 
-    final pendingCount = (map["pending_count"] is int) ? map["pending_count"] as int : 0;
+    final pendingCount = (map["pending_count"] is int)
+        ? map["pending_count"] as int
+        : 0;
     final latestCreatedAt = map["latest_created_at"] as String?;
 
-    final hasNew = pendingCount > 0 &&
+    final hasNew =
+        pendingCount > 0 &&
         latestCreatedAt != null &&
         latestCreatedAt.isNotEmpty &&
         latestCreatedAt != _lastSeenLatestCreatedAt;

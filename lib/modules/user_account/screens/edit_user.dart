@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/settings.dart';
 import 'dart:convert';
 
 import 'package:turnaplay_mobile/widgets/footer.dart';
@@ -75,7 +76,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
 
     try {
       final response = await request.post(
-        'http://localhost:8000/api/accounts/dashboard/users/update/',
+        '$HOST/api/accounts/dashboard/users/update/',
         jsonEncode({
           'user_id': widget.userId,
           'username': _usernameController.text,

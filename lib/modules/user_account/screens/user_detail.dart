@@ -5,6 +5,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/widgets/footer.dart';
 import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
+import 'package:turnaplay_mobile/settings.dart';
 import 'edit_user.dart';
 
 class UserDetailScreen extends StatefulWidget {
@@ -48,7 +49,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
     try {
       final response = await request.get(
-        'http://localhost:8000/api/accounts/dashboard/users/${widget.userId}/',
+        '$HOST/api/accounts/dashboard/users/${widget.userId}/',
       );
 
       if (response['status'] == true) {
@@ -102,7 +103,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.post(
-        'http://localhost:8000/api/accounts/dashboard/users/delete/',
+        '$HOST/api/accounts/dashboard/users/delete/',
         jsonEncode({'user_id': _user?['id']}),
       );
 

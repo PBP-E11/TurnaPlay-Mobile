@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/GameAccountEntry.dart';
 import '../../tournaments/models/GameEntry.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 class GameAccountApi {
   final CookieRequest request;
@@ -11,8 +12,8 @@ class GameAccountApi {
 
   Future<List<GameAccountEntry>> fetchAccounts({String? gameId}) async {
     final url = gameId == null
-        ? 'http://localhost:8000/api/game-accounts/'
-        : 'http://localhost:8000/api/game-accounts/?game=$gameId';
+        ? '$HOST/api/game-accounts/'
+        : '$HOST/api/game-accounts/?game=$gameId';
 
     final response = await request.get(url);
     return (response as List).map((e) => GameAccountEntry.fromJson(e)).toList();
@@ -23,7 +24,7 @@ class GameAccountApi {
     required String ingameName,
   }) async {
     final response = await request.postJson(
-      'http://localhost:8000/api/game-accounts/',
+      '$HOST/api/game-accounts/',
       jsonEncode({'game': gameId, 'ingame_name': ingameName}),
     );
 
@@ -36,7 +37,7 @@ class GameAccountApi {
     required String ingameName,
   }) async {
     final response = await request.postJson(
-      'http://localhost:8000/api/game-accounts/$id/',
+      '$HOST/api/game-accounts/$id/',
       jsonEncode({
         '_method': 'PATCH',
         'game': gameId,
@@ -49,12 +50,12 @@ class GameAccountApi {
 
   Future<void> deleteAccount(String id) async {
     await request.postJson(
-      'http://localhost:8000/api/game-accounts/$id/',
+      '$HOST/api/game-accounts/$id/',
       jsonEncode({'_method': 'DELETE'}),
     );
   }
 
   Future<dynamic> fetchGamesRaw() async {
-    return await request.get('http://localhost:8000/api/tournaments/games/');
+    return await request.get('$HOST/api/tournaments/games/');
   }
 }
