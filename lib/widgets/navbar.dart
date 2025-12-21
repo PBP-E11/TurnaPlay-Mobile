@@ -3,6 +3,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/modules/tournaments/screens/tournament_search.dart';
 import 'package:turnaplay_mobile/providers/user_provider.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 class Navbar extends StatelessWidget implements PreferredSizeWidget {
   const Navbar({super.key});
@@ -53,7 +54,7 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
             } else if (value == 'logout') {
               final request = context.read<CookieRequest>();
               final response = await request.logout(
-                "http://localhost:8000/api/accounts/logout/",
+                "$HOST/api/accounts/logout/",
               );
               String message = response["message"];
 

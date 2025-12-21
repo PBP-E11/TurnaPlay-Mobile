@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/settings.dart';
 import 'edit_tournament.dart';
 
 class TournamentDetailScreen extends StatefulWidget {
@@ -33,7 +34,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
 
     try {
       final response = await request.get(
-        'http://localhost:8000/api/accounts/dashboard/tournaments/${widget.tournamentId}/',
+        '$HOST/api/accounts/dashboard/tournaments/${widget.tournamentId}/',
       );
 
       if (response['status'] == true) {
@@ -90,7 +91,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.post(
-        'http://localhost:8000/api/accounts/dashboard/tournaments/delete/',
+        '$HOST/api/accounts/dashboard/tournaments/delete/',
         jsonEncode({'tournament_id': _tournament?['id']}),
       );
 

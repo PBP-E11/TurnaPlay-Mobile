@@ -8,6 +8,7 @@ import 'package:turnaplay_mobile/providers/user_provider.dart';
 import 'package:turnaplay_mobile/widgets/navbar.dart'; // Import CustomAppBar
 import 'package:turnaplay_mobile/widgets/footer.dart'; // Import footer.dart
 import '../../game_account/models/GameAccountFeature.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -36,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.get(
-        'http://localhost:8000/api/accounts/get_user_tournaments/',
+        '$HOST/api/accounts/get_user_tournaments/',
       );
 
       debugPrint("User Tournaments Response: $response");
@@ -412,7 +413,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onPressed: () async {
                   final request = context.read<CookieRequest>();
                   final response = await request.logout(
-                    "http://localhost:8000/api/accounts/logout/",
+                    "$HOST/api/accounts/logout/",
                   );
                   String message = response["message"];
 
