@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/modules/tournament_registration/screens/edit_team_name_form.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
 import 'create_team_form.dart';
 import '../models/team_entry.dart';
@@ -113,14 +114,18 @@ class _ViewTeamState extends State<ViewTeam> {
     }
 
     return ElevatedButton(
-      onPressed: () {
-        // TODO: proper redirect
-        Navigator.pushReplacement(
+      onPressed: () async {
+        final newTeamName = await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CreateTeamForm(tournament: widget.tournament),
+            builder: (context) => EditTeamNameForm(team: _team!),
           ),
         );
+        if (newTeamName != null) {
+          setState(() {
+            _team!.teamName = newTeamName;
+          });
+        }
       },
       child: const Text('Edit Team Name'),
     );
