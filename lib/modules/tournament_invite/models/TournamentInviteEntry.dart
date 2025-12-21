@@ -6,27 +6,38 @@ TournamentInviteResponse tournamentInviteResponseFromJson(String str) =>
 String tournamentInviteResponseToJson(TournamentInviteResponse data) =>
     json.encode(data.toJson());
 
+DateTime _parseDate(dynamic value) {
+  if (value == null) return DateTime.now();
+  final parsed = DateTime.tryParse(value.toString());
+  return parsed ?? DateTime.now();
+}
+
 class TournamentInviteResponse {
   final bool ok;
+  final String? message;
   final List<TournamentInvite> invites;
 
   TournamentInviteResponse({
     required this.ok,
     required this.invites,
+    this.message,
   });
 
   factory TournamentInviteResponse.fromJson(Map<String, dynamic> json) {
     final invitesJson = (json['invites'] as List?) ?? const [];
     return TournamentInviteResponse(
       ok: json['ok'] == true,
+      message: json['message']?.toString(),
       invites: invitesJson
-          .map((e) => TournamentInvite.fromJson(e as Map<String, dynamic>))
+          .whereType<Map<String, dynamic>>()
+          .map((e) => TournamentInvite.fromJson(e))
           .toList(),
     );
   }
 
   Map<String, dynamic> toJson() => {
         'ok': ok,
+        'message': message,
         'invites': invites.map((e) => e.toJson()).toList(),
       };
 }
@@ -48,14 +59,12 @@ class TournamentInvite {
 
   factory TournamentInvite.fromJson(Map<String, dynamic> json) {
     return TournamentInvite(
-      id: (json['id'] ?? '') as String,
-      status: (json['status'] ?? '') as String,
-      createdAt: DateTime.parse(
-        (json['created_at'] ?? DateTime.now().toIso8601String()) as String,
-      ),
+      id: json['id']?.toString() ?? '',
+      status: json['status']?.toString() ?? '',
+      createdAt: _parseDate(json['created_at']),
       tournament:
-          TournamentInfo.fromJson((json['tournament'] ?? {}) as Map<String, dynamic>),
-      team: TeamInfo.fromJson((json['team'] ?? {}) as Map<String, dynamic>),
+          TournamentInfo.fromJson((json['tournament'] as Map?)?.cast<String, dynamic>() ?? {}),
+      team: TeamInfo.fromJson((json['team'] as Map?)?.cast<String, dynamic>() ?? {}),
     );
   }
 
@@ -76,13 +85,13 @@ class TournamentInfo {
   TournamentInfo({
     required this.id,
     required this.name,
-    required this.game,
+    this.game,
   });
 
   factory TournamentInfo.fromJson(Map<String, dynamic> json) => TournamentInfo(
-        id: (json['id'] ?? '') as String,
-        name: (json['name'] ?? '') as String,
-        game: json['game'] as String?,
+        id: json['id']?.toString() ?? '',
+        name: json['name']?.toString() ?? '',
+        game: json['game']?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -102,8 +111,8 @@ class TeamInfo {
   });
 
   factory TeamInfo.fromJson(Map<String, dynamic> json) => TeamInfo(
-        id: (json['id'] ?? '') as String,
-        name: (json['name'] ?? '') as String,
+        id: json['id']?.toString() ?? '',
+        name: json['name']?.toString() ?? '',
       );
 
   Map<String, dynamic> toJson() => {
