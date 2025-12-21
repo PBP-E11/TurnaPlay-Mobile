@@ -210,7 +210,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: InkWell(
                         onTap: () {
-                          Navigator.pushNamed(context, '/admin_dashboard');
+                          // Screen Ambha
                         },
                         borderRadius: BorderRadius.circular(16),
                         child: Padding(
@@ -264,7 +264,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    // TODO: Implement navigation to Game Accounts
+                    // TODO: Implement navigation to Game Accounts (Jose)
                   },
                   borderRadius: BorderRadius.circular(16),
                   child: Padding(
