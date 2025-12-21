@@ -10,6 +10,7 @@ import 'create_team_form.dart';
 import '../models/team_entry.dart';
 import '../models/team_member_entry.dart';
 import '../util.dart';
+import '../widgets/whatever.dart';
 
 class ViewTeam extends StatefulWidget {
   final Tournament tournament; // passed from previous page
@@ -81,13 +82,7 @@ class _ViewTeamState extends State<ViewTeam> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Center(
-        child: SizedBox(
-          width: 100,
-          height: 100,
-          child: const CircularProgressIndicator(),
-        ),
-      );
+      return Center(child: CircularProgressIndicator(color: primaryColor));
     }
     return Scaffold(
       appBar: AppBar(title: const Text('View Team')),
@@ -126,7 +121,7 @@ class _ViewTeamState extends State<ViewTeam> {
       return Container();
     }
 
-    return ElevatedButton(
+    return buildElevatedButtonText(
       onPressed: () async {
         final newTeamName = await Navigator.push(
           context,
@@ -140,7 +135,7 @@ class _ViewTeamState extends State<ViewTeam> {
           });
         }
       },
-      child: const Text('Edit Team Name'),
+      text: 'Edit Team Name',
     );
   }
 
@@ -149,7 +144,7 @@ class _ViewTeamState extends State<ViewTeam> {
       return Container();
     }
 
-    return ElevatedButton(
+    return buildElevatedButtonText(
       onPressed: () {
         Navigator.push(
           context,
@@ -164,7 +159,7 @@ class _ViewTeamState extends State<ViewTeam> {
           _fetchTeamDetails();
         });
       },
-      child: const Text('Change Game Account'),
+      text: 'Change Game Account',
     );
   }
 
@@ -173,11 +168,11 @@ class _ViewTeamState extends State<ViewTeam> {
       return Container();
     }
 
-    return ElevatedButton(
+    return buildElevatedButtonText(
       onPressed: () {
         _leaveTeam();
       },
-      child: const Text('Leave Team'),
+      text: 'Leave Team',
     );
   }
 
@@ -186,7 +181,7 @@ class _ViewTeamState extends State<ViewTeam> {
       return Container();
     }
 
-    return ElevatedButton(
+    return buildElevatedButtonText(
       onPressed: () {
         Navigator.push(
           context,
@@ -198,7 +193,7 @@ class _ViewTeamState extends State<ViewTeam> {
           _fetchTeamDetails();
         });
       },
-      child: const Text('Add Member'),
+      text: 'Add Member',
     );
   }
 }
