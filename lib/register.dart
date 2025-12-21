@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:turnaplay_mobile/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
@@ -265,11 +264,9 @@ class _RegisterPageState extends State<RegisterPage> {
                               content: Text('Successfully registered!'),
                             ),
                           );
-                          Navigator.pushReplacement(
+                          Navigator.pushReplacementNamed(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => const LoginPage(),
-                            ),
+                            '/login',
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(

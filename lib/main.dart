@@ -2,9 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/login.dart';
+import 'package:turnaplay_mobile/providers/user_provider.dart';
+import 'package:turnaplay_mobile/register.dart';
+import 'package:turnaplay_mobile/modules/tournaments/screens/tournament_list.dart';
+import 'package:turnaplay_mobile/modules/user_account/screens/profile_screen.dart';
+import 'modules/game_account/models/GameAccountAPI.dart';
+import 'modules/game_account/models/GameAccountController.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<CookieRequest>(create: (_) => CookieRequest()),
+        ChangeNotifierProvider(
+          create: (_) => UserProvider()..checkLoginStatus(),
+        ),
+        Provider<GameAccountApi>(
+          create: (context) => GameAccountApi(context.read<CookieRequest>()),
+        ),
+        ChangeNotifierProvider<GameAccountController>(
+          create: (context) =>
+              GameAccountController(context.read<GameAccountApi>()),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,35 +36,20 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Provider(
-      create: (_) {
-        CookieRequest request = CookieRequest();
-        return request;
-      },
-      child: MaterialApp(
-        title: 'TurnaPlay',
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // TRY THIS: Try running your application with "flutter run". You'll see
-          // the application has a purple toolbar. Then, without quitting the app,
-          // try changing the seedColor in the colorScheme below to Colors.green
-          // and then invoke "hot reload" (save your changes or press the "hot
-          // reload" button in a Flutter-supported IDE, or press "r" if you used
-          // the command line to start the app).
-          //
-          // Notice that the counter didn't reset back to zero; the application
-          // state is not lost during the reload. To reset the state, use hot
-          // restart instead.
-          //
-          // This works for code too, not just values: Most code changes can be
-          // tested with just a hot reload.
-          colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: Colors.blue,
-          ).copyWith(secondary: Colors.blueAccent[400]),
-        ),
-        home: const LoginPage(),
+    return MaterialApp(
+      title: 'TurnaPlay',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.blue,
+        ).copyWith(secondary: Colors.blueAccent[400]),
       ),
+      home: const LoginPage(),
+      routes: {
+        '/home': (context) => const TournamentListScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/login': (context) => const LoginPage(),
+        '/register': (context) => const RegisterPage(),
+      },
     );
   }
 }
