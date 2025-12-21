@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 class InvitePopupPoller extends StatefulWidget {
   final Widget child;
@@ -15,7 +16,7 @@ class InvitePopupPoller extends StatefulWidget {
     super.key,
     required this.child,
     required this.onOpenInvites,
-    this.baseUrl = "$HOST:8000",
+    this.baseUrl = "$HOST",
     this.interval = const Duration(seconds: 10),
     this.onAfterDialog,
   });
