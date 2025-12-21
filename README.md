@@ -7,6 +7,12 @@
 - Muhammad Hadziqul Falah Teguh - 2406437432
 - Tangguh Ambha Wahyuga - 2406361536
 
+## Download
+Download aplikasi versi terbaru: [Download APK](https://app.bitrise.io/app/226353bf-9ef4-4b88-9e6a-5b49841f802e/installable-artifacts/4f630cbbd267f62f/public-install-page/d66c6d5a9785bb9643c9fd6373fb8a5d)
+
+## Promotion/Overview Video
+Lihat video aplikasi kita di tautan berikut : [Video](https://drive.google.com/file/d/1Ga7Cy50KVqZTsL8JbaPosBf8Xy9vtfUp/view?usp=sharing)
+
 ## Deskripsi Aplikasi
 
 TurnaPlay adalah sebuah aplikasi yang berfungsi sebagai pusat informasi turnamen esport di Indonesia. Platform ini hadir untuk menjawab masalah yang sering dialami para gamers, yaitu sulitnya menemukan informasi lomba karena tersebar di berbagai akun media sosial seperti instagram. Melalui TurnaPlay, semua informasi turnamen dikumpulkan, disaring, dan diverifikasi agar pengguna bisa mendapatkan data yang akurat dan terstruktur dalam satu tempat. 
@@ -91,15 +97,18 @@ Fitur tersebut diadakan guna untuk mengatasi situasi adanya turnamen atau penggu
 Autentikasi
 - Register -> POST /api/accounts/register
 - Login -> POST /api/accounts/login
+
 Tournament
 - Create Tournament -> POST /api/create-tournament
 - View Tournament -> GET /api/tournaments
 - Delete Tournament -> DELETE /api/delete-tournament
+
 Game Account
 - Buat Game Account -> POST /api/game-account/create
 - List Game Account -> GET /api/game-account/list
 - Edit Game Account -> POST /api/game-account/update
 - Delete Game Account -> DELETE /api/game-account/delete
+
 Team & Registration
 - Daftar Tim Baru -> POST /api/team/create
 - Update Nama Tim -> POST /api/team/update
@@ -108,11 +117,13 @@ Team & Registration
 - Masuk Tim -> POST /api/team/member/join
 - Edit Game Account Pada Tim -> POST /api/team/member/update
 - Keluar dari Tim -> POST /api/team/member/delete
+
 Invite
 - Buat Invite Tim -> POST /api/invites/send
 - Cek Invite Yang Ada -> GET /api/invites/incoming
 - Cek Invite Yang Baru Muncul -> GET /api/invites/new
 - Balas Invite -> POST /api/invites/respond
+
 Dashboard
 - User Dashboard -> GET /api/dashbord
 - User List -> GET /api/dashboard/users

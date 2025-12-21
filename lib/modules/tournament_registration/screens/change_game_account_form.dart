@@ -5,6 +5,7 @@ import 'package:turnaplay_mobile/modules/game_account/models/GameAccountEntry.da
 import 'package:turnaplay_mobile/modules/tournament_registration/models/team_entry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
 import '../util.dart';
+import '../widgets/components.dart';
 
 class EditGameAccountForm extends StatefulWidget {
   final Team team; // passed from previous page
@@ -23,7 +24,6 @@ class _EditGameAccountFormState extends State<EditGameAccountForm> {
   final _formKey = GlobalKey<FormState>();
   List<GameAccountEntry>? _gameAccounts;
   String? _selectedGameAccountId;
-  bool _isSubmitting = false;
   bool _isLoading = true;
 
   Future<void> _loadState() async {
@@ -46,7 +46,6 @@ class _EditGameAccountFormState extends State<EditGameAccountForm> {
       'game_account_id': _selectedGameAccountId,
     };
 
-    setState(() => _isSubmitting = true);
     final responseBody = await sendPost(
       context.read(),
       'api/team/member/update/',
@@ -55,7 +54,6 @@ class _EditGameAccountFormState extends State<EditGameAccountForm> {
     if (responseBody != null && mounted) {
       Navigator.pop(context);
     }
-    setState(() => _isSubmitting = false);
   }
 
   @override
@@ -67,14 +65,9 @@ class _EditGameAccountFormState extends State<EditGameAccountForm> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Center(
-        child: SizedBox(
-          width: 100,
-          height: 100,
-          child: const CircularProgressIndicator(),
-        ),
-      );
+      return Center(child: CircularProgressIndicator(color: primaryColor));
     }
+
     return Scaffold(
       appBar: AppBar(title: const Text('Change Game Account')),
       body: Padding(
@@ -82,9 +75,11 @@ class _EditGameAccountFormState extends State<EditGameAccountForm> {
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              buildLabel('Game Account'),
               DropdownButtonFormField<String>(
-                hint: const Text('Select Game Account'),
+                decoration: buildInputDecoration('Select Game Account'),
                 items: _gameAccounts!
                     .map(
                       (gameAccount) => DropdownMenuItem<String>(
@@ -98,13 +93,10 @@ class _EditGameAccountFormState extends State<EditGameAccountForm> {
                 validator: (val) =>
                     val == null ? 'Please select a game account' : null,
               ),
-              const SizedBox(height: 24),
-              // Submit button
-              ElevatedButton(
-                onPressed: _isSubmitting ? null : _submitForm,
-                child: _isSubmitting
-                    ? const CircularProgressIndicator()
-                    : const Text('Change Game Account'),
+
+              buildElevatedButtonText(
+                onPressed: _submitForm,
+                text: 'Change Game Account',
               ),
             ],
           ),

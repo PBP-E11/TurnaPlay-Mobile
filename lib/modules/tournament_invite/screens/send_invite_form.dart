@@ -8,10 +8,14 @@ import 'package:turnaplay_mobile/widgets/base_screen.dart';
 
 class SendInviteFormScreen extends StatefulWidget {
   final String baseUrl;
+  final String tournamentId;
+  final String teamId;
 
   const SendInviteFormScreen({
     super.key,
     required this.baseUrl,
+    required this.tournamentId,
+    required this.teamId,
   });
 
   @override
@@ -22,16 +26,12 @@ class _SendInviteFormScreenState extends State<SendInviteFormScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _usernameController = TextEditingController();
-  final _tournamentIdController = TextEditingController();
-  final _teamIdController = TextEditingController();
 
   bool _submitting = false;
 
   @override
   void dispose() {
     _usernameController.dispose();
-    _tournamentIdController.dispose();
-    _teamIdController.dispose();
     super.dispose();
   }
 
@@ -50,9 +50,8 @@ class _SendInviteFormScreenState extends State<SendInviteFormScreen> {
       final request = context.read<CookieRequest>();
 
       final payload = <String, dynamic>{
-        "username": _usernameController.text.trim(),
-        "tournament_id": _tournamentIdController.text.trim(),
-        "team_id": _teamIdController.text.trim(),
+        "username_or_email": _usernameController.text.trim(),
+        "registration_id": widget.teamId,
       };
 
       final res = await request.postJson(
@@ -127,32 +126,6 @@ class _SendInviteFormScreenState extends State<SendInviteFormScreen> {
                 validator: (v) {
                   final s = (v ?? "").trim();
                   if (s.isEmpty) return "Username is required";
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _tournamentIdController,
-                decoration: const InputDecoration(
-                  labelText: "tournament_id",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (v) {
-                  final s = (v ?? "").trim();
-                  if (s.isEmpty) return "tournament_id is required";
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _teamIdController,
-                decoration: const InputDecoration(
-                  labelText: "team_id",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (v) {
-                  final s = (v ?? "").trim();
-                  if (s.isEmpty) return "team_id is required";
                   return null;
                 },
               ),
