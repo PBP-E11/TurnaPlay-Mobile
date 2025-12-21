@@ -1,71 +1,113 @@
-// To parse this JSON data, do
-//
-//     final tournamentInviteEntry = tournamentInviteEntryFromJson(jsonString);
-
 import 'dart:convert';
 
-TournamentInviteEntry tournamentInviteEntryFromJson(String str) =>
-    TournamentInviteEntry.fromJson(json.decode(str));
+TournamentInviteResponse tournamentInviteResponseFromJson(String str) =>
+    TournamentInviteResponse.fromJson(json.decode(str));
 
-String tournamentInviteEntryToJson(TournamentInviteEntry data) =>
+String tournamentInviteResponseToJson(TournamentInviteResponse data) =>
     json.encode(data.toJson());
 
-class TournamentInviteEntry {
-  List<TournamentInvite> tournamentInvites;
+class TournamentInviteResponse {
+  final bool ok;
+  final List<TournamentInvite> invites;
 
-  TournamentInviteEntry({required this.tournamentInvites});
+  TournamentInviteResponse({
+    required this.ok,
+    required this.invites,
+  });
 
-  factory TournamentInviteEntry.fromJson(Map<String, dynamic> json) =>
-      TournamentInviteEntry(
-        tournamentInvites: List<TournamentInvite>.from(
-          json["tournament_invites"].map((x) => TournamentInvite.fromJson(x)),
-        ),
-      );
+  factory TournamentInviteResponse.fromJson(Map<String, dynamic> json) {
+    final invitesJson = (json['invites'] as List?) ?? const [];
+    return TournamentInviteResponse(
+      ok: json['ok'] == true,
+      invites: invitesJson
+          .map((e) => TournamentInvite.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-    "tournament_invites": List<dynamic>.from(
-      tournamentInvites.map((x) => x.toJson()),
-    ),
-  };
+        'ok': ok,
+        'invites': invites.map((e) => e.toJson()).toList(),
+      };
 }
 
 class TournamentInvite {
-  String id;
-  int userAccountId;
-  String tournamentRegistrationId;
-  String status;
-  DateTime createdAt;
-  DateTime updatedAt;
+  final String id;
+  final String status;
+  final DateTime createdAt;
+  final TournamentInfo tournament;
+  final TeamInfo team;
 
   TournamentInvite({
     required this.id,
-    required this.userAccountId,
-    required this.tournamentRegistrationId,
     required this.status,
     required this.createdAt,
-    required this.updatedAt,
+    required this.tournament,
+    required this.team,
   });
 
-  factory TournamentInvite.fromJson(Map<String, dynamic> json) =>
-      TournamentInvite(
-        id: json["id"] ?? "",
-        userAccountId: json["user_account_id"] ?? 0,
-        tournamentRegistrationId: json["tournament_registration_id"] ?? "",
-        status: json["status"] ?? "",
-        createdAt: DateTime.parse(
-          json["created_at"] ?? DateTime.now().toIso8601String(),
-        ),
-        updatedAt: DateTime.parse(
-          json["updated_at"] ?? DateTime.now().toIso8601String(),
-        ),
+  factory TournamentInvite.fromJson(Map<String, dynamic> json) {
+    return TournamentInvite(
+      id: (json['id'] ?? '') as String,
+      status: (json['status'] ?? '') as String,
+      createdAt: DateTime.parse(
+        (json['created_at'] ?? DateTime.now().toIso8601String()) as String,
+      ),
+      tournament:
+          TournamentInfo.fromJson((json['tournament'] ?? {}) as Map<String, dynamic>),
+      team: TeamInfo.fromJson((json['team'] ?? {}) as Map<String, dynamic>),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'status': status,
+        'created_at': createdAt.toIso8601String(),
+        'tournament': tournament.toJson(),
+        'team': team.toJson(),
+      };
+}
+
+class TournamentInfo {
+  final String id;
+  final String name;
+  final String? game;
+
+  TournamentInfo({
+    required this.id,
+    required this.name,
+    required this.game,
+  });
+
+  factory TournamentInfo.fromJson(Map<String, dynamic> json) => TournamentInfo(
+        id: (json['id'] ?? '') as String,
+        name: (json['name'] ?? '') as String,
+        game: json['game'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "user_account_id": userAccountId,
-    "tournament_registration_id": tournamentRegistrationId,
-    "status": status,
-    "created_at": createdAt.toIso8601String(),
-    "updated_at": updatedAt.toIso8601String(),
-  };
+        'id': id,
+        'name': name,
+        'game': game,
+      };
+}
+
+class TeamInfo {
+  final String id;
+  final String name;
+
+  TeamInfo({
+    required this.id,
+    required this.name,
+  });
+
+  factory TeamInfo.fromJson(Map<String, dynamic> json) => TeamInfo(
+        id: (json['id'] ?? '') as String,
+        name: (json['name'] ?? '') as String,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+      };
 }
