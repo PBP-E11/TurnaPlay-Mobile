@@ -7,6 +7,7 @@ import 'package:turnaplay_mobile/modules/user_account/widgets/history_tournament
 import 'package:turnaplay_mobile/providers/user_provider.dart';
 import 'package:turnaplay_mobile/widgets/navbar.dart'; // Import CustomAppBar
 import 'package:turnaplay_mobile/widgets/footer.dart'; // Import footer.dart
+import '../../game_account/models/GameAccountFeature.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -75,22 +76,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
     if (index == 0) {
       // Navigate to TournamentListScreen (Home)
-      Navigator.pushReplacementNamed(
-        context,
-        '/home',
-      );
+      Navigator.pushReplacementNamed(context, '/home');
     } else if (index == 1) {
-       // Navigate to Create Tournament
-       Navigator.push(
+      // Navigate to Create Tournament
+      Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => const TournamentCreationForm(),
-        ),
+        MaterialPageRoute(builder: (context) => const TournamentCreationForm()),
       ).then((_) {
-         // Reset index to profile when coming back
-         setState(() {
-           _currentIndex = 2;
-         });
+        // Reset index to profile when coming back
+        setState(() {
+          _currentIndex = 2;
+        });
       });
     } else if (index == 2) {
       // Already on Profile, do nothing
@@ -126,7 +122,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const CircleAvatar(
                             radius: 50,
                             backgroundImage: AssetImage(
-                                "static/profile/photoprofile.jpeg"), // Local asset
+                              "static/profile/photoprofile.jpeg",
+                            ), // Local asset
                             backgroundColor: Colors.white,
                           ),
                           Container(
@@ -143,7 +140,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 16),
                       // Name
                       Text(
-                        Provider.of<UserProvider>(context).displayName.isNotEmpty
+                        Provider.of<UserProvider>(
+                              context,
+                            ).displayName.isNotEmpty
                             ? Provider.of<UserProvider>(context).displayName
                             : Provider.of<UserProvider>(context).username,
                         style: const TextStyle(
@@ -264,7 +263,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    // TODO: Implement navigation to Game Accounts (Jose)
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const GameAccountFeature(),
+                      ),
+                    );
                   },
                   borderRadius: BorderRadius.circular(16),
                   child: Padding(
@@ -352,7 +356,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: Colors.grey.withOpacity(0.1),
                         spreadRadius: 1,
                         blurRadius: 5,
-                        offset: const Offset(0, 3), // changes position of shadow
+                        offset: const Offset(
+                          0,
+                          3,
+                        ), // changes position of shadow
                       ),
                     ],
                   ),
@@ -376,10 +383,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 8),
                       Text(
                         "Participate in tournaments to see your history here!",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[500],
-                        ),
+                        style: TextStyle(fontSize: 14, color: Colors.grey[500]),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -391,8 +395,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
                   children: _userTournaments
-                      .map((tournament) =>
-                          HistoryTournamentCard(tournament: tournament))
+                      .map(
+                        (tournament) =>
+                            HistoryTournamentCard(tournament: tournament),
+                      )
                       .toList(),
                 ),
               ),
@@ -409,26 +415,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     "http://localhost:8000/api/accounts/logout/",
                   );
                   String message = response["message"];
-                  
+
                   if (context.mounted) {
-                      await Provider.of<UserProvider>(context, listen: false).logout();
+                    await Provider.of<UserProvider>(
+                      context,
+                      listen: false,
+                    ).logout();
                   }
 
                   if (context.mounted) {
                     if (response['status']) {
                       String uname = response["username"];
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("$message Goodbye, $uname."),
-                        ),
+                        SnackBar(content: Text("$message Goodbye, $uname.")),
                       );
                       Navigator.pushReplacementNamed(context, "/login");
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(message),
-                        ),
-                      );
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(message)));
                     }
                   }
                 },
