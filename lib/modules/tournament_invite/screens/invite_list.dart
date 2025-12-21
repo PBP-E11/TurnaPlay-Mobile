@@ -3,6 +3,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import '../models/TournamentInviteEntry.dart';
 import '../widgets/invite_tile.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 class InviteListScreen extends StatefulWidget {
   const InviteListScreen({super.key});
