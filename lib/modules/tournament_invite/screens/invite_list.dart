@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
+import 'package:turnaplay_mobile/widgets/footer.dart';
 import '../models/TournamentInviteEntry.dart';
 import '../widgets/invite_tile.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 class InviteListScreen extends StatefulWidget {
   const InviteListScreen({super.key});
@@ -13,7 +16,8 @@ class InviteListScreen extends StatefulWidget {
 
 class _InviteListScreenState extends State<InviteListScreen> {
   late Future<(TournamentInviteResponse, TournamentInviteResponse)> _future;
-  static const String baseUrl = "$HOST:8000";
+  static const String baseUrl = "$HOST";
+  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -41,6 +45,24 @@ class _InviteListScreenState extends State<InviteListScreen> {
     );
 
     return (incoming, outgoing);
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const TournamentForm(),
+        ),
+      );
+    } else if (index == 2) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    }
   }
 
   @override
@@ -117,6 +139,10 @@ class _InviteListScreenState extends State<InviteListScreen> {
             ),
           );
         },
+      ),
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
       ),
     );
   }
