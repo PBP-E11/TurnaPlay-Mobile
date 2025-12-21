@@ -5,6 +5,9 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'edit_tournament.dart';
 
+import 'package:turnaplay_mobile/widgets/footer.dart';
+import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
+
 class TournamentDetailScreen extends StatefulWidget {
   final String tournamentId;
 
@@ -19,11 +22,25 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
   List<Map<String, dynamic>> _registrations = [];
   List<Map<String, dynamic>> _individualParticipants = [];
   bool _isLoading = true;
+  final int _currentIndex = 2;
 
   @override
   void initState() {
     super.initState();
     fetchTournamentDetail();
+  }
+
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TournamentForm()),
+      );
+    } else if (index == 2) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    }
   }
 
   Future<void> fetchTournamentDetail() async {
@@ -124,6 +141,10 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
         title: const Text('Tournament Detail'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
+      ),
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

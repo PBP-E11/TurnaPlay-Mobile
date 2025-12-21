@@ -3,6 +3,9 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
 
+import 'package:turnaplay_mobile/widgets/footer.dart';
+import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
+
 class CreateOrganizerScreen extends StatefulWidget {
   const CreateOrganizerScreen({super.key});
 
@@ -21,6 +24,7 @@ class _CreateOrganizerScreenState extends State<CreateOrganizerScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  final int _currentIndex = 2;
 
   @override
   void dispose() {
@@ -30,6 +34,19 @@ class _CreateOrganizerScreenState extends State<CreateOrganizerScreen> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TournamentForm()),
+      );
+    } else if (index == 2) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    }
   }
 
   Future<void> _createOrganizer() async {
@@ -83,6 +100,10 @@ class _CreateOrganizerScreenState extends State<CreateOrganizerScreen> {
         title: const Text('Create Organizer'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
+      ),
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
       ),
       drawer: _buildDrawer(),
       body: SingleChildScrollView(

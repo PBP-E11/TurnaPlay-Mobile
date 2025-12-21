@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/widgets/footer.dart';
+import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
 import '../models/UserAccountEntry.dart';
 import 'create_organizer.dart';
 import 'user_detail.dart';
-import 'manage_tournaments.dart';
 import 'dart:convert';
 
 class ManageUsersScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   List<UserAccount> _users = [];
   int _totalUsers = 0;
   bool _isLoading = true;
+  final int _currentIndex = 2;
 
   // Filters
   String? _selectedRole;
@@ -28,6 +30,19 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   void initState() {
     super.initState();
     fetchUsers();
+  }
+
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TournamentForm()),
+      );
+    } else if (index == 2) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    }
   }
 
   @override
@@ -138,6 +153,10 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
+      ),
       appBar: AppBar(
         title: const Text('Manage Users'),
         backgroundColor: Colors.deepPurple,
