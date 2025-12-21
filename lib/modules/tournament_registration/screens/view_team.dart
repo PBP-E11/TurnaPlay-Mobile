@@ -86,16 +86,25 @@ class _ViewTeamState extends State<ViewTeam> {
     }
     return Scaffold(
       appBar: AppBar(title: const Text('View Team')),
-      body: Padding(
-        padding: EdgeInsetsGeometry.all(16),
-        child: Column(
-          children: ([Text(_team!.teamName), _buildEditTeamButton(context)])
-            ..addAll(_buildMembers(context))
-            ..addAll([
-              _buildChangeGameAccountButton(context),
-              _buildAddMemberButton(context),
-              _buildLeaveTeamButton(context),
-            ]),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsetsGeometry.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children:
+                ([
+                    buildLabel('Team Name'),
+                    _blockContainer(child: Text(_team!.teamName)),
+                    _buildEditTeamButton(context),
+                    buildLabel('Members'),
+                  ])
+                  ..addAll(_buildMembers(context))
+                  ..addAll([
+                    _buildChangeGameAccountButton(context),
+                    _buildAddMemberButton(context),
+                    _buildLeaveTeamButton(context),
+                  ]),
+          ),
         ),
       ),
     );
@@ -105,15 +114,46 @@ class _ViewTeamState extends State<ViewTeam> {
     List<Widget> widgets = [];
     for (TeamMember member in _team!.members) {
       widgets.add(
-        Row(
-          children: [
-            Text(member.gameAccountName!),
-            Text(member.userAccountName!),
-          ],
+        _blockContainer(
+          verticalPadding: 4,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  member.gameAccountName!,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  member.userAccountName!,
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                ),
+              ],
+            ),
+          ),
         ),
       );
     }
     return widgets;
+  }
+
+  Widget _blockContainer({required Widget child, double verticalPadding = 16}) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: verticalPadding),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: child,
+    );
   }
 
   Widget _buildEditTeamButton(BuildContext context) {

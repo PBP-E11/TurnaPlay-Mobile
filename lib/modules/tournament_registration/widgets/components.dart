@@ -6,7 +6,8 @@ Widget buildElevatedButtonText({
   required void Function()? onPressed,
   required String text,
 }) {
-  return SizedBox(
+  return Container(
+    margin: EdgeInsets.fromLTRB(0, 16, 0, 16),
     width: double.infinity,
     height: 48,
     child: ElevatedButton(
@@ -65,7 +66,7 @@ InputDecoration buildInputDecoration(
 
 Widget buildLabel(String text) {
   return Padding(
-    padding: const EdgeInsets.only(bottom: 8.0, top: 4.0),
+    padding: const EdgeInsets.only(bottom: 4.0, top: 8.0),
     child: Text(
       text,
       style: const TextStyle(

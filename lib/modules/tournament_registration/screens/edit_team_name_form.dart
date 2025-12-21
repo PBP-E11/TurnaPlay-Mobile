@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/modules/tournament_registration/models/team_entry.dart';
 import '../util.dart';
+import '../widgets/whatever.dart';
 
 class EditTeamNameForm extends StatefulWidget {
   final Team team; // passed from previous page
@@ -14,7 +15,7 @@ class EditTeamNameForm extends StatefulWidget {
 class _EditTeamNameFormState extends State<EditTeamNameForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _teamNameController = TextEditingController();
-  bool _isSubmitting = false;
+  bool _isLoading = false;
 
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) {
@@ -26,7 +27,7 @@ class _EditTeamNameFormState extends State<EditTeamNameForm> {
       'team_name': _teamNameController.text,
     };
 
-    setState(() => _isSubmitting = true);
+    setState(() => _isLoading = true);
     final responseBody = await sendPost(
       context.read(),
       'api/team/update/',
@@ -35,7 +36,7 @@ class _EditTeamNameFormState extends State<EditTeamNameForm> {
     if (responseBody != null && mounted) {
       Navigator.pop(context, _teamNameController.text);
     }
-    setState(() => _isSubmitting = false);
+    setState(() => _isLoading = false);
   }
 
   @override
@@ -46,6 +47,9 @@ class _EditTeamNameFormState extends State<EditTeamNameForm> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Center(child: CircularProgressIndicator(color: primaryColor));
+    }
     return Scaffold(
       appBar: AppBar(title: const Text('Edit Team Name')),
       body: Padding(
@@ -53,22 +57,21 @@ class _EditTeamNameFormState extends State<EditTeamNameForm> {
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Team name
+              buildLabel('Team Name'),
+
               TextFormField(
                 controller: _teamNameController,
-                decoration: const InputDecoration(labelText: 'Team Name'),
+                decoration: buildInputDecoration('Team Name'),
                 validator: (val) => val == null || val.isEmpty
                     ? 'Please enter a team name'
                     : null,
               ),
-              const SizedBox(height: 24),
-              // Submit button
-              ElevatedButton(
-                onPressed: _isSubmitting ? null : _submitForm,
-                child: _isSubmitting
-                    ? const CircularProgressIndicator()
-                    : const Text('Edit Team Name'),
+
+              buildElevatedButtonText(
+                onPressed: _isLoading ? null : _submitForm,
+                text: 'Edit Team Name',
               ),
             ],
           ),

@@ -7,7 +7,6 @@ import 'package:turnaplay_mobile/modules/tournament_registration/widgets/whateve
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
 import '../screens/view_team.dart';
 import '../util.dart';
-import '../widgets/whatever.dart';
 
 class CreateTeamForm extends StatefulWidget {
   final Tournament tournament; // passed from previous page
@@ -105,8 +104,10 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+
             children: [
-              // Leader dropdown
+              buildLabel('Game Account'),
               DropdownButtonFormField<String>(
                 decoration: buildInputDecoration('Select Game Account'),
                 items: _gameAccounts!
@@ -122,8 +123,8 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
                 validator: (val) =>
                     val == null ? 'Please select a game account' : null,
               ),
-              const SizedBox(height: 16),
-              // Team name
+
+              buildLabel('Team Name'),
               TextFormField(
                 controller: _teamNameController,
                 decoration: buildInputDecoration('Team Name'),
@@ -131,7 +132,7 @@ class _CreateTeamFormState extends State<CreateTeamForm> {
                     ? 'Please enter a team name'
                     : null,
               ),
-              const SizedBox(height: 24),
+
               // Submit button
               buildElevatedButtonText(
                 onPressed: _submitForm,
