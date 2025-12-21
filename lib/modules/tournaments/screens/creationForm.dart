@@ -3,6 +3,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentFormatEntry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/GameEntry.dart';
+import 'package:turnaplay_mobile/modules/tournaments/screens/tournament_list.dart';
 
 class TournamentCreationForm extends StatefulWidget {
   const TournamentCreationForm({super.key});
@@ -26,8 +27,9 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
   List<TournamentFormat> _formats = [];
   List<TournamentFormat> _filteredFormats = [];
   List<Game> _games = [];
-  
+
   bool _isLoading = true;
+  final Color primaryColor = const Color(0xFF494598);
 
   @override
   void initState() {
@@ -38,41 +40,37 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
   Future<void> _fetchData() async {
     final request = context.read<CookieRequest>();
     try {
-      debugPrint("Fetching Games and Formats...");
-      
       // Fetch Games
       final gamesResponse = await request.get(
         'http://localhost:8000/api/tournaments/games/',
       );
-      debugPrint("Games Response: $gamesResponse");
-      
+
       // Fetch Formats
       final formatsResponse = await request.get(
         'http://localhost:8000/api/tournaments/formats/',
       );
-      debugPrint("Formats Response: $formatsResponse");
 
       setState(() {
         if (gamesResponse != null) {
           if (gamesResponse is List) {
-             // Handle standard list response: [{}, {}]
-             _games = gamesResponse.map((x) => Game.fromJson(x)).toList();
+            _games = gamesResponse.map((x) => Game.fromJson(x)).toList();
           } else {
-             // Handle wrapped response: {"game": [{}, {}]}
-             final gameEntry = GameEntry.fromJson(gamesResponse);
-             _games = gameEntry.game;
+            final gameEntry = GameEntry.fromJson(gamesResponse);
+            _games = gameEntry.game;
           }
         }
 
         if (formatsResponse != null) {
           if (formatsResponse is List) {
-             _formats = formatsResponse.map((x) => TournamentFormat.fromJson(x)).toList();
+            _formats = formatsResponse
+                .map((x) => TournamentFormat.fromJson(x))
+                .toList();
           } else {
-             final formatEntry = TournamentFormatEntry.fromJson(formatsResponse);
-             _formats = formatEntry.tournamentFormat;
+            final formatEntry = TournamentFormatEntry.fromJson(formatsResponse);
+            _formats = formatEntry.tournamentFormat;
           }
         }
-        
+
         _isLoading = false;
       });
     } catch (e) {
@@ -87,8 +85,62 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
     setState(() {
       _selectedGameId = gameId;
       _selectedFormatId = null; // Reset selected format
-      _filteredFormats = _formats.where((format) => format.gameId == gameId).toList();
+      _filteredFormats = _formats
+          .where((format) => format.gameId == gameId)
+          .toList();
     });
+  }
+
+  InputDecoration _buildInputDecoration(
+    String hintText, {
+    Widget? prefixIcon,
+    BoxConstraints? prefixIconConstraints,
+    Widget? prefix,
+    String? prefixText,
+    TextStyle? prefixStyle,
+  }) {
+    return InputDecoration(
+      hintText: hintText,
+      hintStyle: const TextStyle(color: Colors.grey),
+      filled: true,
+      fillColor: Colors.white,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: primaryColor, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Colors.red),
+      ),
+      prefixIcon: prefixIcon,
+      prefixIconConstraints: prefixIconConstraints,
+      prefix: prefix,
+      prefixText: prefixText,
+      prefixStyle: prefixStyle,
+    );
+  }
+
+  Widget _buildLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0, top: 4.0),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
+      ),
+    );
   }
 
   @override
@@ -96,23 +148,39 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Tournament')),
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Create Tournament',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: primaryColor))
           : Form(
               key: _formKey,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // 1. Game Dropdown
+                    _buildLabel('Game'),
                     DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        labelText: 'Game',
-                        border: OutlineInputBorder(),
-                      ),
+                      decoration: _buildInputDecoration('Select a game'),
                       value: _selectedGameId,
+                      icon: const Icon(Icons.keyboard_arrow_down),
                       items: _games.map((Game game) {
                         return DropdownMenuItem<String>(
                           value: game.id,
@@ -134,12 +202,11 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                     const SizedBox(height: 16),
 
                     // 2. Tournament Format Dropdown
+                    _buildLabel('Tournament Format'),
                     DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        labelText: 'Tournament Format',
-                        border: OutlineInputBorder(),
-                      ),
+                      decoration: _buildInputDecoration('Choose Game First'),
                       value: _selectedFormatId,
+                      icon: const Icon(Icons.keyboard_arrow_down),
                       items: _filteredFormats.map((TournamentFormat format) {
                         return DropdownMenuItem<String>(
                           value: format.id,
@@ -161,10 +228,11 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                     const SizedBox(height: 16),
 
                     // 3. Tournament Name
+                    _buildLabel('Tournament Name'),
                     TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Tournament Name',
-                        border: OutlineInputBorder(),
+                      style: const TextStyle(color: Colors.black),
+                      decoration: _buildInputDecoration(
+                        'e.g. Winter Championship 2025',
                       ),
                       onChanged: (String? value) {
                         setState(() {
@@ -181,12 +249,13 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                     const SizedBox(height: 16),
 
                     // 4. Description
+                    _buildLabel('Description'),
                     TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Description',
-                        border: OutlineInputBorder(),
+                      style: const TextStyle(color: Colors.black),
+                      decoration: _buildInputDecoration(
+                        'Brief details about the event...',
                       ),
-                      maxLines: 3,
+                      maxLines: 4,
                       onChanged: (String? value) {
                         setState(() {
                           _description = value!;
@@ -201,40 +270,90 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                     ),
                     const SizedBox(height: 16),
 
-                    // 5. Date Picker
-                    Row(
-                      children: [
-                        Text(
-                          _tournamentDate == null
-                              ? 'No Date Chosen'
-                              : "${_tournamentDate!.toLocal()}".split(' ')[0],
-                        ),
-                        const SizedBox(width: 20),
-                        ElevatedButton(
-                          onPressed: () async {
-                            final DateTime? picked = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime(2101),
-                            );
-                            if (picked != null && picked != _tournamentDate) {
-                              setState(() {
-                                _tournamentDate = picked;
-                              });
-                            }
-                          },
-                          child: const Text('Select Date'),
-                        ),
-                      ],
+                    // 5. Start Date
+                    _buildLabel('Start Date'),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            _tournamentDate == null
+                                ? 'No Date Chosen'
+                                : "${_tournamentDate!.toLocal()}".split(' ')[0],
+                            style: TextStyle(
+                              color: _tournamentDate == null
+                                  ? Colors.grey
+                                  : Colors.black,
+                              fontSize: 16,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              final DateTime? picked = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime(2101),
+                                builder: (context, child) {
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      colorScheme: ColorScheme.light(
+                                        primary: primaryColor,
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
+                              );
+                              if (picked != null && picked != _tournamentDate) {
+                                setState(() {
+                                  _tournamentDate = picked;
+                                });
+                              }
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: primaryColor,
+                              side: BorderSide(color: primaryColor),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text('Select Date'),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 16),
 
                     // 6. Prize Pool
+                    _buildLabel('Prize Pool'),
                     TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Prize Pool',
-                        border: OutlineInputBorder(),
+                      style: const TextStyle(color: Colors.black),
+                      decoration: _buildInputDecoration(
+                        '0',
+                        prefixIcon: const Padding(
+                          padding: EdgeInsets.only(left: 16, right: 8),
+                          child: Text(
+                            "Rp",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        prefixIconConstraints: const BoxConstraints(
+                          minWidth: 0,
+                          minHeight: 0,
+                        ),
                       ),
                       keyboardType: TextInputType.number,
                       onChanged: (String? value) {
@@ -255,10 +374,22 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                     const SizedBox(height: 16),
 
                     // 7. Banner URL
+                    _buildLabel('Banner URL'),
                     TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Banner URL',
-                        border: OutlineInputBorder(),
+                      style: const TextStyle(color: Colors.black),
+                      decoration: _buildInputDecoration(
+                        'example.com/image.png',
+                        prefixIcon: const Padding(
+                          padding: EdgeInsets.only(left: 16, right: 4),
+                          child: Text(
+                            "https://",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                        prefixIconConstraints: const BoxConstraints(
+                          minWidth: 0,
+                          minHeight: 0,
+                        ),
                       ),
                       onChanged: (String? value) {
                         setState(() {
@@ -269,11 +400,10 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                     const SizedBox(height: 16),
 
                     // 8. Max Team Count
+                    _buildLabel('Max Team Count'),
                     TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Max Team Count',
-                        border: OutlineInputBorder(),
-                      ),
+                      style: const TextStyle(color: Colors.black),
+                      decoration: _buildInputDecoration('e.g. 16'),
                       keyboardType: TextInputType.number,
                       onChanged: (String? value) {
                         setState(() {
@@ -290,59 +420,80 @@ class _TournamentCreationFormState extends State<TournamentCreationForm> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 32),
 
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          if (_tournamentDate == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Please select a date"),
-                              ),
-                            );
-                            return;
-                          }
-
-                          final response = await request.post(
-                            "http://localhost:8000/api/tournaments/create-tournament/",
-                            {
-                              'tournament_name': _tournamentName,
-                              'description': _description,
-                              'tournament_date':
-                                  "${_tournamentDate!.year}-${_tournamentDate!.month.toString().padLeft(2, '0')}-${_tournamentDate!.day.toString().padLeft(2, '0')}",
-                              'prize_pool': _prizePool.toString(), // Converted to String
-                              'banner': _banner,
-                              'team_maximum_count': _teamMaximumCount.toString(), // Converted to String
-                              'tournament_format': _selectedFormatId,
-                            },
-                          );
-
-                          if (context.mounted) {
-                            if (response['status'] == 'success') {
+                    // Create Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 55,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            if (_tournamentDate == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text(
-                                    "Tournament created successfully!",
-                                  ),
+                                  content: Text("Please select a date"),
                                 ),
                               );
-                              Navigator.pop(context);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    response['message'] ??
-                                        "Failed to create tournament",
+                              return;
+                            }
+
+                            final response = await request.post(
+                              "http://localhost:8000/api/tournaments/create-tournament/",
+                              {
+                                'tournament_name': _tournamentName,
+                                'description': _description,
+                                'tournament_date':
+                                    "${_tournamentDate!.year}-${_tournamentDate!.month.toString().padLeft(2, '0')}-${_tournamentDate!.day.toString().padLeft(2, '0')}",
+                                'prize_pool': _prizePool.toString(),
+                                'banner': _banner,
+                                'team_maximum_count': _teamMaximumCount
+                                    .toString(),
+                                'tournament_format': _selectedFormatId,
+                              },
+                            );
+
+                            if (context.mounted) {
+                              if (response['status'] == 'success') {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      "Tournament created successfully!",
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
+                                Navigator.pop(context, true);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      response['message'] ??
+                                          "Failed to create tournament",
+                                    ),
+                                  ),
+                                );
+                              }
                             }
                           }
-                        }
-                      },
-                      child: const Text('Create Tournament'),
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          elevation: 2,
+                        ),
+                        child: const Text(
+                          'Create Tournament',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),

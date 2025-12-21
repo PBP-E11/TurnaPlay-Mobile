@@ -42,6 +42,8 @@ class Tournament {
   bool isActive;
   String status;
   int participantsCount;
+  String? game;
+  String? organizerName;
 
   Tournament({
     required this.id,
@@ -58,6 +60,8 @@ class Tournament {
     required this.isActive,
     required this.status,
     required this.participantsCount,
+    this.game,
+    this.organizerName,
   });
 
   factory Tournament.fromJson(Map<String, dynamic> json) => Tournament(
@@ -81,6 +85,8 @@ class Tournament {
     isActive: json["is_active"] ?? false,
     status: json["status"] ?? "",
     participantsCount: json["participants_count"] ?? 0,
+    game: json["game"],
+    organizerName: json["organizer"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -99,5 +105,7 @@ class Tournament {
     "is_active": isActive,
     "status": status,
     "participants_count": participantsCount,
+    "game": game,
+    "organizer": organizerName,
   };
 }
