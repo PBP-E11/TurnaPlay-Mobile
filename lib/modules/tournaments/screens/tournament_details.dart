@@ -27,8 +27,9 @@ class TournamentDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(title: const Text('Detail Turnamen')),
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -94,8 +95,6 @@ class TournamentDetails extends StatelessWidget {
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
         ),
         const SizedBox(height: 8),
@@ -107,25 +106,22 @@ class TournamentDetails extends StatelessWidget {
         ),
         const SizedBox(height: 16),
 
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildInfoCard(
-              icon: Icons.bolt,
-              label: "Format",
-              value: "Competitive 5v5",
-            ),
-            _buildInfoCard(
-              icon: Icons.monetization_on,
-              label: "Total Prize Pool",
-              value: "Rp 10.000.000",
-            ),
-            _buildInfoCard(
-              icon: Icons.group,
-              label: "Slot terbatas",
-              value: "20 tim",
-            ),
-          ],
+        _buildInfoCard(
+          icon: Icons.bolt,
+          label: "Format",
+          value: "Competitive 5v5",
+        ),
+        const SizedBox(height: 8),
+        _buildInfoCard(
+          icon: Icons.monetization_on,
+          label: "Total Prize Pool",
+          value: "Rp 10.000.000",
+        ),
+        const SizedBox(height: 8),
+        _buildInfoCard(
+          icon: Icons.group,
+          label: "Slot terbatas",
+          value: "20 tim",
         ),
       ],
     );
@@ -171,8 +167,7 @@ class TournamentDetails extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      width: 160,
-      height: 60,
+      width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -180,32 +175,26 @@ class TournamentDetails extends StatelessWidget {
           BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
-      child: Row(
+      child: Column(
         children: [
           Icon(icon, size: 28, color: const Color(0xFF494598)),
-          const SizedBox(width: 8),
-          Column(
-            children: [
-              Text(
-                label,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black54,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                value,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.black54,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
         ],
       ),
