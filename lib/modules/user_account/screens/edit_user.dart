@@ -265,41 +265,6 @@ class _EditUserScreenState extends State<EditUserScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Active Status Switch
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Account Status',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            _isActive ? 'Active' : 'Inactive',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: _isActive ? Colors.green : Colors.grey,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Switch(
-                            value: _isActive,
-                            onChanged: (value) {
-                              setState(() => _isActive = value);
-                            },
-                            activeColor: Colors.green,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-
                   // Buttons
                   Row(
                     children: [
