@@ -1,8 +1,7 @@
-import 'package:turnaplay_mobile/modules/tournaments/screens/tournament_list.dart';
-import 'package:turnaplay_mobile/register.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/providers/user_provider.dart';
 
 void main() {
   runApp(const LoginApp());
@@ -180,25 +179,6 @@ class _LoginPageState extends State<LoginPage> {
                       return null;
                     },
                   ),
-                  
-                  const SizedBox(height: 16.0), // Space between Password and Forget Password?
-
-                  // Forget Password - NEW POSITION
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        // Forgot password logic (if any)
-                      },
-                      child: Text(
-                        'Forgot Password?',
-                        style: TextStyle(
-                          color: primaryColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
 
                   const SizedBox(height: 24.0), // Space between Forget Password? and Login Button
 
@@ -218,20 +198,35 @@ class _LoginPageState extends State<LoginPage> {
                       if (request.loggedIn) {
                         String message = response['message'];
                         String uname = response['username'];
+                        
+                        // Parse role and isAdmin
+                        String role = response['role'] ?? 'user';
+                        bool isAdmin = response['is_admin'] ?? false;
+                        String email = response['email'] ?? '';
+                        String displayName = response['display_name'] ?? '';
+                        
                         if (context.mounted) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MyHomePage(),
-                            ),
-                          );
-                          ScaffoldMessenger.of(context)
-                            ..hideCurrentSnackBar()
-                            ..showSnackBar(
-                              SnackBar(
-                                content: Text("$message Welcome, $uname."),
-                              ),
+                           await Provider.of<UserProvider>(context, listen: false).login(
+                             uname, 
+                             role, 
+                             isAdmin, 
+                             email: email, 
+                             displayName: displayName
+                           );
+                           
+                           if (context.mounted) {
+                             Navigator.pushReplacementNamed(
+                              context,
+                              '/home',
                             );
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
+                                SnackBar(
+                                  content: Text("$message Welcome, $uname."),
+                                ),
+                              );
+                           }
                         }
                       } else {
                         if (context.mounted) {
@@ -282,11 +277,9 @@ class _LoginPageState extends State<LoginPage> {
                   Center(
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushNamed(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterPage(),
-                          ),
+                          '/register',
                         );
                       },
                       child: Text.rich(
