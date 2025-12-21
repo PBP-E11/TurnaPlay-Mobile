@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/modules/tournament_registration/models/team_entry.dart';
 import '../util.dart';
-import '../widgets/whatever.dart';
+import '../widgets/components.dart';
 
 class EditTeamNameForm extends StatefulWidget {
   final Team team; // passed from previous page

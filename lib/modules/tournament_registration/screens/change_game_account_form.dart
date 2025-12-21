@@ -5,7 +5,7 @@ import 'package:turnaplay_mobile/modules/game_account/models/GameAccountEntry.da
 import 'package:turnaplay_mobile/modules/tournament_registration/models/team_entry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
 import '../util.dart';
-import '../widgets/whatever.dart';
+import '../widgets/components.dart';
 
 class EditGameAccountForm extends StatefulWidget {
   final Team team; // passed from previous page
