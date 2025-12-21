@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'edit_user.dart';
 
 class UserDetailScreen extends StatefulWidget {
   final String userId;
@@ -343,6 +344,34 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                           icon: const Icon(Icons.arrow_back),
                           label: const Text('Back to User List'),
                           style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            // Navigate to Edit User
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditUserScreen(
+                                  userId: widget.userId,
+                                  userData: _user!,
+                                ),
+                              ),
+                            ).then((updated) {
+                              if (updated == true) {
+                                fetchUserDetail(); // Refresh data
+                              }
+                            });
+                          },
+                          icon: const Icon(Icons.edit),
+                          label: const Text('Edit User'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepPurple,
+                            foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
                         ),

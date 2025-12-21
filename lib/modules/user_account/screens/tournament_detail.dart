@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'edit_tournament.dart';
 
 class TournamentDetailScreen extends StatefulWidget {
   final String tournamentId;
@@ -352,6 +353,34 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                           icon: const Icon(Icons.arrow_back),
                           label: const Text('Back to Tournament List'),
                           style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            // Navigate to Edit Tournament
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditTournamentScreen(
+                                  tournamentId: widget.tournamentId,
+                                  tournamentData: _tournament!,
+                                ),
+                              ),
+                            ).then((updated) {
+                              if (updated == true) {
+                                fetchTournamentDetail(); // Refresh data
+                              }
+                            });
+                          },
+                          icon: const Icon(Icons.edit),
+                          label: const Text('Edit Tournament'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepPurple,
+                            foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
                         ),
