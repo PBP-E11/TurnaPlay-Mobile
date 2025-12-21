@@ -16,21 +16,21 @@ Tujuan utama TurnaPlay adalah menghemat waktu para gamers sekaligus membantu pen
 ## Daftar Modul
 Semua operasi CRUD hanya dapat dilakukan oleh pengguna yang sudah login sesuai hak aksesnya (atau admin), kecuali jika ditandai (dengan garis bawah/underscore). Fields hanyalah deskripsi singkat sebagian data penting dan bagaimana interaksi antar modul.
 
-### 1. Tournament
+### 1. Tournament - (Falah + Fahri)
 * **Create**: membuat kompetisi. _admin only_
 * **Read**: membaca info publik kompetisi (tanggal mulai, hadiah, dll).
 * **Update**: memperbarui info kompetisi. _admin only_
 * **Delete**: menghapus kompetisi. _admin only_
 * **Fields**: PK id, tanggal\_mulai, hadiah, thumbnail, etc.
 
-### 2. User
+### 2. User - (Ambha)
 * **Create**: membuat profil (display name, site username, email, password).
 * **Read**: membaca profil. _public access_
 * **Update**: memperbarui profil.
 * **Delete**: menghapus profil/akun.
 * **Fields**: PK id, site\_username UNIQUE, email UNIQUE, password_hash, display\_name.
 
-### 3. Game Account
+### 3. Game Account - (Jose)
 * **Create**: membuat akun (game category, ingame name)
 * **Read**: membaca akun _public access_
 * **Update**: mengubah detail akun
@@ -38,21 +38,21 @@ Semua operasi CRUD hanya dapat dilakukan oleh pengguna yang sudah login sesuai h
 * **Fields**: PK id, FK user.id, game\_category, ingame\_name, active
 * **Constraint**: (game\_category, ingame\_name) UNIQUE
 
-### 4. Tournament Invite
+### 4. Tournament Invite - (Karla)
 * **Create**: mengundang pengguna untuk bergabung dalam kompetisi
 * **Read**: melihat detail invite (kompetisi terkait, anggota tim, kapten)
 * **Update**: menerima atau menolak invite
 * **Delete**: membatalkan invite
 * **Fields**: PK id, FK user.id, FK tournament\_id, status
 
-### 5. Team-member (terikat many-to-many tournament\_registration dan user account)
+### 5. Team-member (terikat many-to-many tournament\_registration dan user account) - (Fahri + Karla)
 * **Create**: menambahkan akun ke tim
 * **Read**: melihat anggota tim __public__
 * **Update**: ubah akun yang digunakan pada tim
 * **Delete**: mengeluarkan akun dari tim __user/leader__
 * **Fields**: PK id, FK account.id, FK tournament\_registration.id
 
-### 6. Tournament Registration/Team Detail
+### 6. Tournament Registration/Team Detail (Fahri)
 * **Create**: membuat tim saat registration
 * **Read**: menampilkan detail tim dan kredensial
 * **Update**: mengedit detail tim, misalnya nama tim
@@ -88,25 +88,32 @@ Fitur tersebut diadakan guna untuk mengatasi situasi adanya turnamen atau penggu
 **User dengan role admin dibuat oleh admin.**
 
 ## Pengintegrasian Dengan Django API
+Autentikasi
 - Register -> POST /api/accounts/register
 - Login -> POST /api/accounts/login
+Tournament
 - Create Tournament -> POST /api/create-tournament
 - View Tournament -> GET /api/tournaments
 - Delete Tournament -> DELETE /api/delete-tournament
+Game Account
 - Buat Game Account -> POST /api/game-account/create
 - List Game Account -> GET /api/game-account/list
 - Edit Game Account -> POST /api/game-account/update
 - Delete Game Account -> DELETE /api/game-account/delete
+Team & Registration
 - Daftar Tim Baru -> POST /api/team/create
 - Update Nama Tim -> POST /api/team/update
-- Bubarkan Tim -> DELETE /api/team/delete
-- Masuk Tim -> POST /api/team-member/create
-- Edit Game Account Pada Tim -> POST /api/team-member/edit
-- Keluar dari Tim -> DELETE /api/team-member/delete
+- Dapatkan Detail Tim -> POST /api/team/details
+- Bubarkan Tim -> POST /api/team/delete
+- Masuk Tim -> POST /api/team/member/join
+- Edit Game Account Pada Tim -> POST /api/team/member/update
+- Keluar dari Tim -> POST /api/team/member/delete
+Invite
 - Buat Invite Tim -> POST /api/invites/send
 - Cek Invite Yang Ada -> GET /api/invites/incoming
 - Cek Invite Yang Baru Muncul -> GET /api/invites/new
 - Balas Invite -> POST /api/invites/respond
+Dashboard
 - User Dashboard -> GET /api/dashbord
 - User List -> GET /api/dashboard/users
 - Buat Akun Organizer -> POST /api/dashboard/users/create-organizer
