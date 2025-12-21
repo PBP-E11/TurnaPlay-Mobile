@@ -6,9 +6,28 @@ import 'package:turnaplay_mobile/providers/user_provider.dart';
 import 'package:turnaplay_mobile/register.dart';
 import 'package:turnaplay_mobile/modules/tournaments/screens/tournament_list.dart';
 import 'package:turnaplay_mobile/modules/user_account/screens/profile_screen.dart';
+import 'modules/game_account/models/GameAccountAPI.dart';
+import 'modules/game_account/models/GameAccountController.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<CookieRequest>(create: (_) => CookieRequest()),
+        ChangeNotifierProvider(
+          create: (_) => UserProvider()..checkLoginStatus(),
+        ),
+        Provider<GameAccountApi>(
+          create: (context) => GameAccountApi(context.read<CookieRequest>()),
+        ),
+        ChangeNotifierProvider<GameAccountController>(
+          create: (context) =>
+              GameAccountController(context.read<GameAccountApi>()),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,32 +36,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider(
-          create: (_) {
-            CookieRequest request = CookieRequest();
-            return request;
-          },
-        ),
-        ChangeNotifierProvider(
-          create: (_) => UserProvider()..checkLoginStatus(),
-        ),
-      ],
-      child: MaterialApp(
-        title: 'TurnaPlay',
-        theme: ThemeData(
-            colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
-          .copyWith(secondary: Colors.blueAccent[400]),
-        ),
-        home: const LoginPage(),
-        routes: {
-          '/home': (context) => const TournamentListScreen(),
-          '/profile': (context) => const ProfileScreen(),
-          '/login': (context) => const LoginPage(),
-          '/register': (context) => const RegisterPage(),
-        },
+    return MaterialApp(
+      title: 'TurnaPlay',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
+            .copyWith(secondary: Colors.blueAccent[400]),
       ),
+      home: const LoginPage(),
+      routes: {
+        '/home': (context) => const TournamentListScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/login': (context) => const LoginPage(),
+        '/register': (context) => const RegisterPage(),
+      },
     );
   }
 }
