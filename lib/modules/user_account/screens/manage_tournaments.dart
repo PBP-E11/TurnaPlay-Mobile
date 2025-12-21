@@ -147,7 +147,6 @@ class _ManageTournamentsScreenState extends State<ManageTournamentsScreen> {
                   backgroundImage: AssetImage(
                     "static/profile/photoprofile.jpeg",
                   ), // Local asset
-                  child: Icon(Icons.person, color: Colors.deepPurple, size: 20),
                 ),
                 SizedBox(width: 8),
                 Text('TurnaPlay', style: TextStyle(fontSize: 14)),

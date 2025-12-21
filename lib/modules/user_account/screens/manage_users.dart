@@ -153,7 +153,6 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   backgroundImage: AssetImage(
                     "static/profile/photoprofile.jpeg",
                   ), // Local asset
-                  child: Icon(Icons.person, color: Colors.deepPurple, size: 20),
                 ),
                 const SizedBox(width: 8),
                 const Text('TurnaPlay', style: TextStyle(fontSize: 14)),
