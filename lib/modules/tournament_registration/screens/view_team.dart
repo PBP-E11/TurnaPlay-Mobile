@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/modules/tournament_invite/screens/send_invite_form.dart';
 import 'package:turnaplay_mobile/modules/tournament_registration/screens/edit_team_name_form.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
 import 'create_team_form.dart';
 import '../models/team_entry.dart';
 import '../models/team_member_entry.dart';
 import '../util.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 class ViewTeam extends StatefulWidget {
   final Tournament tournament; // passed from previous page
@@ -174,7 +176,11 @@ class _ViewTeamState extends State<ViewTeam> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => CreateTeamForm(tournament: widget.tournament),
+            builder: (context) => SendInviteFormScreen(
+              baseUrl: HOST,
+              tournamentId: _team!.tournamentId,
+              teamId: _team!.teamId,
+            ),
           ),
         );
       },
