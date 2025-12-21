@@ -10,6 +10,7 @@ import 'create_team_form.dart';
 import '../models/team_entry.dart';
 import '../models/team_member_entry.dart';
 import '../util.dart';
+import 'package:turnaplay_mobile/settings.dart';
 import '../widgets/whatever.dart';
 
 class ViewTeam extends StatefulWidget {
@@ -226,7 +227,11 @@ class _ViewTeamState extends State<ViewTeam> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SendInviteFormScreen(baseUrl: HOST),
+            builder: (context) => SendInviteFormScreen(
+              baseUrl: HOST,
+              tournamentId: _team!.tournamentId,
+              teamId: _team!.teamId,
+            ),
           ),
         ).then((_) {
           _isLoading = true;
