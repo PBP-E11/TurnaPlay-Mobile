@@ -1,1 +1,1 @@
-const String HOST = '://localhost:8000';
+const String HOST = 'https://muhammad-fahri41-turnaplay.pbp.cs.ui.ac.id';
