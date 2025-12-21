@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/widgets/footer.dart';
+import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
 import 'package:turnaplay_mobile/settings.dart';
 import 'edit_user.dart';
 
@@ -19,11 +21,25 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   Map<String, dynamic>? _user;
   List<Map<String, dynamic>> _tournaments = [];
   bool _isLoading = true;
+  final int _currentIndex = 2;
 
   @override
   void initState() {
     super.initState();
     fetchUserDetail();
+  }
+
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TournamentForm()),
+      );
+    } else if (index == 2) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    }
   }
 
   Future<void> fetchUserDetail() async {
@@ -117,6 +133,10 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
+      ),
       appBar: AppBar(
         title: const Text('User Detail'),
         backgroundColor: Colors.deepPurple,

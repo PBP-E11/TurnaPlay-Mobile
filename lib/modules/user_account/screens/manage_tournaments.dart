@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/widgets/footer.dart';
+import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
+import 'package:turnaplay_mobile/modules/user_account/screens/tournament_detail.dart';
 import 'tournament_detail.dart';
 import 'manage_users.dart';
 import 'package:turnaplay_mobile/settings.dart';
@@ -19,6 +22,7 @@ class _ManageTournamentsScreenState extends State<ManageTournamentsScreen> {
   List<Map<String, dynamic>> _tournaments = [];
   Map<String, dynamic>? _statistics;
   bool _isLoading = true;
+  final int _currentIndex = 2;
 
   String? _selectedGame;
   final TextEditingController _searchController = TextEditingController();
@@ -27,6 +31,19 @@ class _ManageTournamentsScreenState extends State<ManageTournamentsScreen> {
   void initState() {
     super.initState();
     fetchTournaments();
+  }
+
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TournamentForm()),
+      );
+    } else if (index == 2) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    }
   }
 
   @override
@@ -134,6 +151,10 @@ class _ManageTournamentsScreenState extends State<ManageTournamentsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
+      ),
       appBar: AppBar(
         title: const Text('Manage Tournaments'),
         backgroundColor: Colors.deepPurple,

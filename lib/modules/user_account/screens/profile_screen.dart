@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:turnaplay_mobile/modules/tournament_invite/screens/invite_list.dart';
 import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
 import 'package:turnaplay_mobile/modules/user_account/widgets/history_tournament_card.dart';
 import 'package:turnaplay_mobile/providers/user_provider.dart';
-import 'package:turnaplay_mobile/widgets/navbar.dart'; // Import CustomAppBar
-import 'package:turnaplay_mobile/widgets/footer.dart'; // Import footer.dart
+import 'package:turnaplay_mobile/widgets/base_screen.dart';
 import '../../game_account/models/GameAccountFeature.dart';
 import 'package:turnaplay_mobile/settings.dart';
 
@@ -18,7 +18,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  int _currentIndex = 2; // Profile screen is the third tab (index 2)
   final Color primaryColor = const Color(0xFF494598);
 
   List<Tournament> _userTournaments = [];
@@ -72,9 +71,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
     if (index == 0) {
       // Navigate to TournamentListScreen (Home)
       Navigator.pushReplacementNamed(context, '/home');
@@ -82,12 +78,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // Navigate to Create Tournament
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const TournamentCreationForm()),
+        MaterialPageRoute(builder: (context) => const TournamentForm()),
       ).then((_) {
-        // Reset index to profile when coming back
-        setState(() {
-          _currentIndex = 2;
-        });
+        // Reset index to profile when coming back - Handled by BaseScreen re-render or no-op
       });
     } else if (index == 2) {
       // Already on Profile, do nothing
@@ -96,9 +89,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5), // Light grey background
-      appBar: const Navbar(), // Use Navbar
+    return BaseScreen(
+      initialIndex: 2,
+      onTap: _onItemTapped,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,7 +203,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: InkWell(
                         onTap: () {
-                          // Screen Ambha
+                          Navigator.pushNamed(context, '/dashboard-users');
                         },
                         borderRadius: BorderRadius.circular(16),
                         child: Padding(
@@ -253,6 +246,67 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
               ),
+
+            // My Invites
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                children: [
+                  Card(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const InviteListScreen(),
+                          ),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(16),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: primaryColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                Icons.mail,
+                                color: primaryColor,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            const Expanded(
+                              child: Text(
+                                "My Invites",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.grey[400],
+                              size: 18,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
 
             // My Game Accounts
             Padding(
@@ -465,10 +519,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 24), // Bottom padding
           ],
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: _onItemTapped,
       ),
     );
   }

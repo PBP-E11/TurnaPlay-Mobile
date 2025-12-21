@@ -18,8 +18,7 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: const Icon(Icons.search, color: Colors.black, size: 28),
         onPressed: () {
-          Navigator.push(
-            context,
+          Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute(
               builder: (context) => const TournamentSearchScreen(),
             ),
@@ -72,7 +71,7 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("$message Goodbye, $uname.")),
                   );
-                  Navigator.pushReplacementNamed(context, "/login");
+                  Navigator.of(context, rootNavigator: true).pushReplacementNamed("/login");
                 } else {
                   ScaffoldMessenger.of(
                     context,

@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/settings.dart';
 import 'dart:convert';
 
+import 'package:turnaplay_mobile/widgets/footer.dart';
+import 'package:turnaplay_mobile/modules/tournaments/screens/creationForm.dart';
+
 class EditTournamentScreen extends StatefulWidget {
   final String tournamentId;
   final Map<String, dynamic> tournamentData;
@@ -27,11 +30,25 @@ class _EditTournamentScreenState extends State<EditTournamentScreen> {
 
   DateTime? _selectedDate;
   bool _isLoading = false;
+  final int _currentIndex = 2;
 
   @override
   void initState() {
     super.initState();
     _loadTournamentData();
+  }
+
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TournamentForm()),
+      );
+    } else if (index == 2) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    }
   }
 
   void _loadTournamentData() {
@@ -140,6 +157,10 @@ class _EditTournamentScreenState extends State<EditTournamentScreen> {
         title: const Text('Edit Tournament'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
+      ),
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
