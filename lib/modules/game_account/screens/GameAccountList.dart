@@ -24,11 +24,15 @@ class _GameAccountListScreenState extends State<GameAccountListScreen> {
     if (index == 0) {
       Navigator.of(context, rootNavigator: true).pushReplacementNamed('/home');
     } else if (index == 1) {
-      Navigator.of(context, rootNavigator: true).push(
-        MaterialPageRoute(builder: (context) => const TournamentForm()),
-      );
+      Navigator.of(
+        context,
+        rootNavigator: true,
+      ).push(MaterialPageRoute(builder: (context) => const TournamentForm()));
     } else if (index == 2) {
-      Navigator.of(context, rootNavigator: true).pushReplacementNamed('/profile');
+      Navigator.of(
+        context,
+        rootNavigator: true,
+      ).pushReplacementNamed('/profile');
     }
   }
 
@@ -54,18 +58,26 @@ class _GameAccountListScreenState extends State<GameAccountListScreen> {
         children: [
           // Custom Header
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 16.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Stack(
+                  alignment: Alignment.center,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.black),
-                      onPressed: () {
-                        Navigator.of(context, rootNavigator: true).pop();
-                      },
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.black),
+                        onPressed: () {
+                          Navigator.of(context, rootNavigator: true).pop();
+                        },
+                      ),
                     ),
+
                     const SizedBox(width: 8),
                     const Text(
                       'Game Accounts',
@@ -77,41 +89,47 @@ class _GameAccountListScreenState extends State<GameAccountListScreen> {
                     ),
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 56.0),
-                  child: Consumer<GameAccountController>(
-                    builder: (context, controller, _) {
-                      if (controller.games.isEmpty) return const SizedBox();
 
-                      return DropdownButtonHideUnderline(
-                        child: DropdownButton<String?>(
-                          value: controller.selectedGameId,
-                          icon: const Icon(Icons.filter_list,
-                              color: Color(0xFF494598)),
-                          onChanged: (value) {
-                            controller.setGameFilter(value);
-                          },
-                          items: [
-                            const DropdownMenuItem<String?>(
-                              value: null,
-                              child: Text('All games'),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 56.0),
+                    child: Consumer<GameAccountController>(
+                      builder: (context, controller, _) {
+                        if (controller.games.isEmpty) return const SizedBox();
+
+                        return DropdownButtonHideUnderline(
+                          child: DropdownButton<String?>(
+                            value: controller.selectedGameId,
+                            icon: const Icon(
+                              Icons.filter_list,
+                              color: Color(0xFF494598),
                             ),
-                            ...controller.games.map(
-                              (game) => DropdownMenuItem<String?>(
-                                value: game.id,
-                                child: Text(game.name),
+                            onChanged: (value) {
+                              controller.setGameFilter(value);
+                            },
+                            items: [
+                              const DropdownMenuItem<String?>(
+                                value: null,
+                                child: Text('All games'),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                              ...controller.games.map(
+                                (game) => DropdownMenuItem<String?>(
+                                  value: game.id,
+                                  child: Text(game.name),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          
+
           // Content
           Expanded(
             child: controller.loading
