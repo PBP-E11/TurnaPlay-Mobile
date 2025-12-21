@@ -8,6 +8,8 @@ import 'package:turnaplay_mobile/modules/tournaments/screens/tournament_list.dar
 import 'package:turnaplay_mobile/modules/user_account/screens/profile_screen.dart';
 import 'modules/game_account/models/GameAccountAPI.dart';
 import 'modules/game_account/models/GameAccountController.dart';
+import 'modules/user_account/screens/manage_users.dart';
+import 'modules/user_account/screens/manage_tournaments.dart';
 
 // invite popup
 import 'package:turnaplay_mobile/modules/tournament_invite/screens/invite_list.dart';
@@ -69,8 +71,9 @@ class MyApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       title: 'TurnaPlay',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
-            .copyWith(secondary: Colors.blueAccent[400]),
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.blue,
+        ).copyWith(secondary: Colors.blueAccent[400]),
       ),
       home: const LoginPage(),
       routes: {
@@ -78,6 +81,8 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const ProfileScreen(),
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
+        '/dashboard-users': (context) => const ManageUsersScreen(),
+        '/dashboard-tournaments': (context) => const ManageTournamentsScreen(),
       },
       builder: (context, child) {
         if (child == null) return const SizedBox.shrink();
@@ -87,9 +92,7 @@ class MyApp extends StatelessWidget {
             final nav = navigatorKey.currentState;
             if (nav == null) return;
             nav.push(
-              MaterialPageRoute(
-                builder: (_) => const InviteListScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const InviteListScreen()),
             );
           },
         );

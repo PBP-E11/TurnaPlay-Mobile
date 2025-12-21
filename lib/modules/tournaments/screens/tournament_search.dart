@@ -3,6 +3,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:turnaplay_mobile/modules/tournaments/models/TournamentEntry.dart';
 import 'package:turnaplay_mobile/modules/tournaments/widgets/tournament_card.dart';
+import 'package:turnaplay_mobile/settings.dart';
 
 class TournamentSearchScreen extends StatefulWidget {
   const TournamentSearchScreen({super.key});
@@ -45,7 +46,7 @@ class _TournamentSearchScreenState extends State<TournamentSearchScreen> {
 
     try {
       final response = await request.get(
-        'http://localhost:8000/api/tournaments/search/?q=${Uri.encodeComponent(query.trim())}',
+        '$HOST/api/tournaments/search/?q=${Uri.encodeComponent(query.trim())}',
       );
 
       debugPrint("Search Response: $response");
@@ -226,7 +227,10 @@ class _TournamentSearchScreenState extends State<TournamentSearchScreen> {
       padding: const EdgeInsets.all(16.0),
       itemCount: _searchResults.length,
       itemBuilder: (context, index) {
-        return TournamentCard(tournament: _searchResults[index]);
+        return TournamentCard(
+          tournament: _searchResults[index],
+          onUpdate: () => _searchTournaments(_searchController.text),
+        );
       },
     );
   }

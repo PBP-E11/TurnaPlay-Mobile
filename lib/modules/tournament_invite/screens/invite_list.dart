@@ -13,7 +13,7 @@ class InviteListScreen extends StatefulWidget {
 
 class _InviteListScreenState extends State<InviteListScreen> {
   late Future<(TournamentInviteResponse, TournamentInviteResponse)> _future;
-  static const String baseUrl = "http://localhost:8000";
+  static const String baseUrl = "$HOST:8000";
 
   @override
   void initState() {
