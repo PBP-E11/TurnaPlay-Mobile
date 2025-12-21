@@ -1,90 +1,83 @@
 import 'package:flutter/material.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
-import '../../game_account/models/GameAccountAPI.dart';
 import '../../game_account/models/GameAccountController.dart';
-import '../../game_account/models/GameAccountEntry.dart';
 
-class GameAccountPickerDialog {
-  static Future<String?> show(BuildContext context) async {
-    return showDialog<String?>(
-      context: context,
-      builder: (dialogContext) {
-        return Dialog(
-          child: ChangeNotifierProvider<GameAccountController>(
-            create: (ctx) {
-              final req = ctx.read<CookieRequest>();
-              return GameAccountController(GameAccountApi(req));
-            },
-            child: const _GameAccountPickerBody(),
-          ),
-        );
-      },
-    );
-  }
+class GameAccountPickerDialog extends StatefulWidget {
+  const GameAccountPickerDialog({super.key});
+
+  @override
+  State<GameAccountPickerDialog> createState() => _GameAccountPickerDialogState();
 }
 
-class _GameAccountPickerBody extends StatelessWidget {
-  const _GameAccountPickerBody();
+class _GameAccountPickerDialogState extends State<GameAccountPickerDialog> {
+  String? _selectedId;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final controller = context.read<GameAccountController>();
+      await controller.loadAccounts();
+      if (!mounted) return;
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<GameAccountController>();
 
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 520, maxHeight: 640),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF5F5F5),
-        appBar: AppBar(
-          backgroundColor: const Color(0xFFF5F5F5),
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.close, color: Colors.black),
-            onPressed: () => Navigator.pop(context, null),
-          ),
-          title: const Text('Choose Game Account'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh, color: Colors.black),
-              onPressed: () => controller.loadAccounts(),
-            ),
-          ],
+    return AlertDialog(
+      title: const Text("Choose Game Account"),
+      content: SizedBox(
+        width: 420,
+        child: Builder(
+          builder: (context) {
+            if (controller.loading) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (controller.error != null) {
+              return Text(controller.error!);
+            }
+
+            final accounts = controller.accounts;
+            if (accounts.isEmpty) {
+              return const Text("No active game accounts found.");
+            }
+
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: accounts.map((a) {
+                  final label = "${a.game} • ${a.ingameName}";
+                  return RadioListTile<String>(
+                    value: a.id,
+                    groupValue: _selectedId,
+                    onChanged: (v) => setState(() => _selectedId = v),
+                    title: Text(label),
+                    subtitle: Text(a.id),
+                  );
+                }).toList(),
+              ),
+            );
+          },
         ),
-        body: controller.loading
-            ? const Center(child: CircularProgressIndicator())
-            : controller.error != null
-                ? Center(child: Text(controller.error!))
-                : _AccountList(accounts: controller.accounts),
       ),
-    );
-  }
-}
-
-class _AccountList extends StatelessWidget {
-  final List<GameAccountEntry> accounts;
-
-  const _AccountList({required this.accounts});
-
-  @override
-  Widget build(BuildContext context) {
-    if (accounts.isEmpty) {
-      return const Center(child: Text("No game accounts found."));
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(12),
-      itemCount: accounts.length,
-      itemBuilder: (context, index) {
-        final acc = accounts[index];
-        return Card(
-          child: ListTile(
-            title: Text(acc.ingameName),
-            subtitle: Text(acc.gameName ?? "Unknown game"),
-            onTap: () => Navigator.pop(context, acc.id),
-          ),
-        );
-      },
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, null),
+          child: const Text("Cancel"),
+        ),
+        ElevatedButton(
+          onPressed: _selectedId == null ? null : () => Navigator.pop(context, _selectedId),
+          child: const Text("OK"),
+        ),
+      ],
     );
   }
 }
